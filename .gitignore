@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local secrets / config
+.env
+
+# Local models (too large for GitHub)
+models/*.gguf
+models/**/*.gguf
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+
