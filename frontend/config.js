@@ -8,8 +8,8 @@ const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hos
 
 const API_BASE = IS_LOCAL
     ? 'http://localhost:8000'
-    : 'https://REPLACE_WITH_YOUR_BACKEND_URL.onrender.com';
+    : 'https://conversational-ai-system.onrender.com';
 
 const WS_BASE = IS_LOCAL
     ? 'ws://localhost:8000'
-    : 'wss://REPLACE_WITH_YOUR_BACKEND_URL.onrender.com';
+    : 'wss://conversational-ai-system.onrender.com';
