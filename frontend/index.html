@@ -1,887 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>AI INTERVIEWER STIMULATOR</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      :root {
-        color-scheme: dark;
-        --bg: #050816;
-        --bg-elevated: #111827;
-        --accent: #22c55e;
-        --accent-soft: rgba(34, 197, 94, 0.12);
-        --border-subtle: #1f2937;
-        --text-main: #e5e7eb;
-        --text-muted: #9ca3af;
-        --danger: #f97373;
-      }
 
-      * {
-        box-sizing: border-box;
-      }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthFirst Pharmacy Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
 
-      body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
-        background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
-        color: var(--text-main);
-        display: flex;
-        align-items: stretch;
-        justify-content: center;
-        padding: 24px 12px;
-      }
+<body>
+    <!-- Mobile sidebar overlay -->
+    <div class="overlay" id="sidebar-overlay"></div>
 
-      .app-shell {
-        width: 100%;
-        max-width: 980px;
-        background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), #020617);
-        border-radius: 24px;
-        border: 1px solid rgba(148, 163, 184, 0.25);
-        box-shadow:
-          0 24px 80px rgba(15, 23, 42, 0.85),
-          0 0 0 1px rgba(15, 23, 42, 0.9);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .app-header {
-        padding: 18px 24px 14px;
-        border-bottom: 1px solid var(--border-subtle);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        background: radial-gradient(circle at top left, #22c55e22, transparent 55%);
-        z-index: 2;
-      }
-
-      .title-block {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .title-main {
-        font-size: 1.1rem;
-        letter-spacing: 0.12em;
-        font-weight: 700;
-        text-transform: uppercase;
-      }
-
-      .title-main span {
-        color: var(--accent);
-      }
-
-      .title-sub {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-      }
-
-      .status-pill {
-        font-size: 0.8rem;
-        padding: 6px 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(34, 197, 94, 0.5);
-        background: radial-gradient(circle at top left, var(--accent-soft), transparent);
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: var(--text-main);
-      }
-
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--accent);
-        box-shadow: 0 0 12px rgba(34, 197, 94, 0.85);
-      }
-
-      .chat-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        padding: 14px 18px 8px;
-        overflow: hidden;
-      }
-
-      .chat-layout {
-        flex: 1;
-        display: grid;
-        grid-template-columns: 240px minmax(0, 1fr);
-        gap: 14px;
-        overflow: hidden;
-      }
-
-      .sidebar {
-        background: rgba(15, 23, 42, 0.95);
-        border-radius: 16px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        padding: 10px 10px 8px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .sidebar-header {
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-        padding-bottom: 4px;
-        border-bottom: 1px solid rgba(31, 41, 55, 0.9);
-      }
-
-      .history-list {
-        margin-top: 4px;
-        flex: 1;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding-right: 2px;
-      }
-
-      .history-item {
-        border-radius: 10px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        padding: 6px 8px;
-        background: radial-gradient(circle at top left, #22c55e11, transparent 60%);
-        font-size: 0.78rem;
-      }
-
-      .history-item-role {
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 2px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .history-item-text {
-        color: var(--text-main);
-        opacity: 0.9;
-      }
-
-      .chat-main {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-      }
-
-      .messages {
-        flex: 1;
-        overflow-y: auto;
-        padding-right: 4px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        scroll-behavior: smooth;
-      }
-
-      .msg-row {
-        display: flex;
-        gap: 8px;
-        max-width: 88%;
-      }
-
-      .msg-row.interviewer {
-        justify-content: flex-start;
-      }
-
-      .msg-row.candidate {
-        justify-content: flex-end;
-        margin-left: auto;
-      }
-
-      .avatar {
-        width: 28px;
-        height: 28px;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.75rem;
-        font-weight: 600;
-        flex-shrink: 0;
-      }
-
-      .avatar.interviewer {
-        background: radial-gradient(circle at top, #22c55e55, #16a34a22);
-        border: 1px solid rgba(34, 197, 94, 0.7);
-        color: #ecfdf5;
-      }
-
-      .avatar.candidate {
-        background: radial-gradient(circle at top, #3b82f655, #1d4ed822);
-        border: 1px solid rgba(59, 130, 246, 0.7);
-        color: #eff6ff;
-      }
-
-      .bubble {
-        padding: 10px 12px;
-        border-radius: 16px;
-        font-size: 0.9rem;
-        line-height: 1.4;
-        border: 1px solid transparent;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-      }
-
-      .bubble.interviewer {
-        background: rgba(15, 23, 42, 0.96);
-        border-color: rgba(55, 65, 81, 0.9);
-        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9);
-      }
-
-      .bubble.candidate {
-        background: linear-gradient(135deg, #22c55e, #16a34a);
-        color: #ecfdf5;
-        border-color: rgba(34, 197, 94, 0.9);
-      }
-
-      .bubble.system {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        border-radius: 999px;
-        padding: 6px 10px;
-        border-color: rgba(55, 65, 81, 0.7);
-        text-align: center;
-        margin: 0 auto;
-      }
-
-      .input-row {
-        display: flex;
-        align-items: flex-end;
-        gap: 10px;
-        padding: 10px 16px 14px;
-        border-top: 1px solid var(--border-subtle);
-        background: linear-gradient(to top, rgba(15, 23, 42, 0.98), transparent);
-      }
-
-      .input-wrapper {
-        flex: 1;
-        position: relative;
-      }
-
-      textarea {
-        width: 100%;
-        max-height: 120px;
-        min-height: 42px;
-        resize: none;
-        padding: 10px 12px 10px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        background: rgba(15, 23, 42, 0.9);
-        color: var(--text-main);
-        font-size: 0.9rem;
-        outline: none;
-      }
-
-      textarea:focus {
-        border-color: rgba(34, 197, 94, 0.9);
-        box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 0.9),
-          0 0 0 1px rgba(34, 197, 94, 0.5);
-      }
-
-      .hint {
-        position: absolute;
-        bottom: -16px;
-        left: 4px;
-        font-size: 0.7rem;
-        color: var(--text-muted);
-      }
-
-      button {
-        border-radius: 999px;
-        border: none;
-        padding: 10px 18px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        background: linear-gradient(135deg, #22c55e, #16a34a);
-        color: #ecfdf5;
-        box-shadow: 0 0 0 1px rgba(22, 163, 74, 0.8),
-          0 12px 32px rgba(22, 163, 74, 0.6);
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        white-space: nowrap;
-      }
-
-      button:disabled {
-        opacity: 0.6;
-        cursor: default;
-        box-shadow: none;
-      }
-
-      .error-banner {
-        background: rgba(127, 29, 29, 0.95);
-        color: #fee2e2;
-        font-size: 0.8rem;
-        padding: 8px 12px;
-        text-align: center;
-      }
-
-      .topic-screen {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617);
-        z-index: 5;
-      }
-
-      .topic-card {
-        width: 100%;
-        max-width: 520px;
-        background: rgba(15, 23, 42, 0.98);
-        border-radius: 20px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        padding: 20px 20px 18px;
-        box-shadow:
-          0 24px 60px rgba(15, 23, 42, 0.85),
-          0 0 0 1px rgba(15, 23, 42, 0.9);
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .topic-title {
-        font-size: 1rem;
-        font-weight: 600;
-      }
-
-      .topic-description {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-      }
-
-      .topic-input-row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-top: 4px;
-      }
-
-      .topic-input-row input {
-        flex: 1;
-        border-radius: 999px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        background: rgba(15, 23, 42, 0.95);
-        color: var(--text-main);
-        padding: 9px 12px;
-        font-size: 0.85rem;
-        outline: none;
-      }
-
-      .topic-hint {
-        font-size: 0.78rem;
-        color: var(--text-muted);
-      }
-
-      @media (max-width: 640px) {
-        .app-shell {
-          border-radius: 18px;
-        }
-
-        .chat-layout {
-          grid-template-columns: minmax(0, 1fr);
-        }
-
-        .sidebar {
-          display: none;
-        }
-
-        .title-main {
-          font-size: 0.95rem;
-        }
-
-        .title-sub {
-          font-size: 0.75rem;
-        }
-      }
-    </style>
-  </head>
-  <body>
     <div class="app-shell">
-      <div class="app-header">
-        <div class="title-block">
-          <div class="title-main">
-            AI <span>INTERVIEWER</span> STIMULATOR
-          </div>
-          <div class="title-sub">
-            Technical AI/ML interviewer running locally on your laptop.
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 10px">
-          <button
-            id="new-session-btn"
-            type="button"
-            style="
-              padding: 6px 12px;
-              font-size: 0.78rem;
-              box-shadow: 0 6px 18px rgba(22, 163, 74, 0.5);
-            "
-          >
-            New session
-          </button>
-          <div class="status-pill" id="status-pill">
-            <span class="status-dot" id="status-dot"></span>
-            <span id="status-text">Idle · Choose a topic</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="error-banner" class="error-banner" style="display: none"></div>
-
-      <!-- Topic selection screen (shown first) -->
-      <div id="topic-screen" class="topic-screen">
-        <div class="topic-card">
-          <div class="topic-title">Choose your interview topic</div>
-          <div class="topic-description">
-            The AI interviewer will only ask questions about this topic and closely related areas.
-            You can change the topic any time by starting a new session.
-          </div>
-          <div class="topic-input-row">
-            <input
-              id="topic-input"
-              type="text"
-              placeholder="e.g., convolutional neural networks, transformers, MLOps, recommendation systems"
-            />
-            <button id="start-btn" type="button">
-              Start interview
-            </button>
-          </div>
-          <div class="topic-hint">
-            Press Enter in the topic field or click "Start interview" to begin.
-          </div>
-        </div>
-      </div>
-
-      <!-- Chat view (shown after topic is chosen) -->
-      <div
-        id="chat-view"
-        style="display: none; flex: 1; display: flex; flex-direction: column"
-      >
-        <div class="chat-container">
-          <div class="chat-layout">
-            <aside class="sidebar">
-              <div class="sidebar-header">Conversation history</div>
-              <div id="history-list" class="history-list"></div>
-            </aside>
-            <div class="chat-main">
-              <div id="messages" class="messages"></div>
+        <!-- ── Sidebar ─────────────────────────────────── -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
+                        <path d="m8.5 8.5 7 7" />
+                    </svg>
+                    HealthFirst
+                </div>
+                <button class="icon-btn" id="new-chat-btn" title="New conversation">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                </button>
             </div>
-          </div>
-        </div>
 
-        <div class="input-row">
-          <div class="input-wrapper">
-            <textarea
-              id="input"
-              rows="1"
-              placeholder="Type your answer and press Enter..."
-            ></textarea>
-            <div class="hint">Press Enter to send · Shift+Enter for new line</div>
-          </div>
-          <button id="send-btn">
-            Send
-          </button>
+            <div class="sidebar-section-label">Recent Conversations</div>
+            <div class="session-list" id="session-list">
+                <!-- injected by JS -->
+                <div class="session-empty">No prior chats yet</div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="hours-card">
+                    <strong>Pharmacy Hours</strong>
+                    <span>Mon–Sat: 8AM – 9PM</span>
+                    <span>Sunday: 10AM – 6PM</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── Main chat area ─────────────────────────── -->
+        <div class="chat-wrapper">
+            <header class="chat-header">
+                <button class="icon-btn menu-btn" id="menu-btn" title="Open sidebar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div class="header-center">
+                    <h1 id="chat-title">HealthFirst Assistant</h1>
+                    <div class="status-row">
+                        <span class="status-pulse connecting" id="status-dot"></span>
+                        <span class="status-label" id="status-label">Connecting…</span>
+                    </div>
+                </div>
+                <button class="icon-btn" id="reset-btn" title="Reset current conversation">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                        <path d="M3 3v5h5" />
+                    </svg>
+                </button>
+            </header>
+
+            <main class="chat-box" id="chat-box">
+                <div class="message assistant">
+                    <div class="msg-avatar">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
+                            <path d="m8.5 8.5 7 7" />
+                        </svg>
+                    </div>
+                    <div class="msg-body">
+                        <div class="bubble">Hello! I'm the HealthFirst Pharmacy Assistant. I can help with OTC
+                            medication availability, general wellness advice, and pharmacy hours. How can I assist you
+                            today?</div>
+                        <span class="msg-time" id="welcome-time"></span>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="chat-input-area">
+                <!-- Quick-prompt chips -->
+                <div class="chips">
+                    <button class="chip" data-msg="What are your pharmacy hours?">🕐 Hours</button>
+                    <button class="chip" data-msg="Do you carry ibuprofen?">💊 Ibuprofen</button>
+                    <button class="chip" data-msg="I have a headache, what do you recommend?">🤕 Headache
+                        relief</button>
+                    <button class="chip" data-msg="What vitamins do you carry?">🌿 Vitamins</button>
+                </div>
+                <form id="chat-form" class="input-form" autocomplete="off">
+                    <textarea id="message-input" placeholder="Type your message…" rows="1" autofocus></textarea>
+                    <button type="submit" id="send-btn" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                    </button>
+                </form>
+            </footer>
         </div>
-      </div>
     </div>
 
-    <script>
-      const topicScreen = document.getElementById("topic-screen");
-      const chatView = document.getElementById("chat-view");
-      const messagesEl = document.getElementById("messages");
-      const historyListEl = document.getElementById("history-list");
-      const inputEl = document.getElementById("input");
-      const sendBtn = document.getElementById("send-btn");
-      const topicInputEl = document.getElementById("topic-input");
-      const startBtn = document.getElementById("start-btn");
-      const newSessionBtn = document.getElementById("new-session-btn");
-      const statusDot = document.getElementById("status-dot");
-      const statusText = document.getElementById("status-text");
-      const errorBanner = document.getElementById("error-banner");
+    <script src="script.js"></script>
+</body>
 
-      let ws = null;
-      let connected = false;
-      let connecting = false;
-      let activeInterviewerBubble = null;
-      let currentTopic = "";
-      const STORAGE_KEY = "ai_interviewer_sessions_v1";
-      let sessions = [];
-      let currentSessionId = null;
-
-      function setStatus(text, isConnected, isError = false) {
-        statusText.textContent = text;
-        if (isError) {
-          statusDot.style.background = "#f97373";
-          statusDot.style.boxShadow = "0 0 12px rgba(248, 113, 113, 0.9)";
-        } else if (isConnected) {
-          statusDot.style.background = "#22c55e";
-          statusDot.style.boxShadow = "0 0 12px rgba(34, 197, 94, 0.85)";
-        } else {
-          statusDot.style.background = "#facc15";
-          statusDot.style.boxShadow = "0 0 12px rgba(250, 204, 21, 0.85)";
-        }
-      }
-
-      function showError(message) {
-        errorBanner.textContent = message;
-        errorBanner.style.display = "block";
-      }
-
-      function hideError() {
-        errorBanner.style.display = "none";
-      }
-
-      function setInputEnabled(enabled) {
-        inputEl.disabled = !enabled;
-        sendBtn.disabled = !enabled;
-      }
-
-      function appendHistory(role, text) {
-        if (!text || role === "system") return;
-        if (!currentSessionId) return;
-        const session = sessions.find((s) => s.id === currentSessionId);
-        if (!session) return;
-        session.messages.push({ role, text });
-        saveSessions();
-        renderSessionList();
-      }
-
-      function appendMessage(role, text, logToSession = true) {
-        const row = document.createElement("div");
-        row.className = `msg-row ${role}`;
-
-        if (role === "system") {
-          const bubble = document.createElement("div");
-          bubble.className = "bubble system";
-          bubble.textContent = text;
-          row.appendChild(bubble);
-        } else {
-          const avatar = document.createElement("div");
-          avatar.className = `avatar ${role}`;
-          avatar.textContent = role === "interviewer" ? "AI" : "You";
-
-          const bubble = document.createElement("div");
-          bubble.className = `bubble ${role}`;
-          bubble.textContent = text;
-
-          if (role === "interviewer") {
-            row.appendChild(avatar);
-            row.appendChild(bubble);
-          } else {
-            row.appendChild(bubble);
-            row.appendChild(avatar);
-          }
-        }
-
-        messagesEl.appendChild(row);
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-
-        if (logToSession) {
-          appendHistory(role, text);
-        }
-      }
-
-      function renderSessionList() {
-        historyListEl.innerHTML = "";
-
-        if (!sessions.length) {
-          const empty = document.createElement("div");
-          empty.className = "history-item-text";
-          empty.style.opacity = "0.7";
-          empty.textContent = "No sessions yet.";
-          historyListEl.appendChild(empty);
-          return;
-        }
-
-        // Show newest first
-        [...sessions]
-          .slice()
-          .reverse()
-          .forEach((session) => {
-            const item = document.createElement("button");
-            item.type = "button";
-            item.className = "history-item";
-            if (session.id === currentSessionId) {
-              item.style.borderColor = "rgba(34, 197, 94, 0.8)";
-            }
-
-            const topicEl = document.createElement("div");
-            topicEl.className = "history-item-role";
-            topicEl.textContent = session.topic || "Untitled topic";
-
-            const textEl = document.createElement("div");
-            textEl.className = "history-item-text";
-            const last = session.messages[session.messages.length - 1];
-            const rawText = last ? last.text : "No messages yet.";
-            const snippet =
-              rawText.length > 110 ? rawText.slice(0, 107) + "..." : rawText;
-            textEl.textContent = snippet;
-
-            item.appendChild(topicEl);
-            item.appendChild(textEl);
-
-            item.addEventListener("click", () => {
-              openSession(session.id);
-            });
-
-            historyListEl.appendChild(item);
-          });
-      }
-
-      function loadSessions() {
-        try {
-          const raw = window.localStorage.getItem(STORAGE_KEY);
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed)) {
-              sessions = parsed;
-            }
-          }
-        } catch (e) {
-          sessions = [];
-        }
-        renderSessionList();
-      }
-
-      function saveSessions() {
-        try {
-          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-        } catch (e) {
-          // ignore storage errors
-        }
-      }
-
-      function openSession(sessionId) {
-        const session = sessions.find((s) => s.id === sessionId);
-        if (!session) return;
-
-        // If we are switching away from a live session, close the socket
-        if (ws && ws.readyState === WebSocket.OPEN && sessionId !== currentSessionId) {
-          ws.close();
-        }
-
-        currentSessionId = sessionId;
-        topicScreen.style.display = "none";
-        chatView.style.display = "flex";
-        setInputEnabled(false);
-        setStatus(
-          `Viewing past session · Topic: ${session.topic || "Untitled"}`,
-          false
-        );
-
-        messagesEl.innerHTML = "";
-        activeInterviewerBubble = null;
-
-        // Re-render all messages for this session without re-logging them
-        session.messages.forEach((m) => {
-          appendMessage(m.role, m.text, false);
-        });
-
-        renderSessionList();
-      }
-
-      function connect(topic) {
-        if (connecting || connected) return;
-        currentTopic = (topic || "").trim();
-        connecting = true;
-        hideError();
-        setStatus("Connecting to engine...", false);
-        setInputEnabled(false);
-
-        const url =
-          (location.protocol === "https:" ? "wss://" : "ws://") +
-          location.host +
-          "/ws/chat";
-
-        ws = new WebSocket(url);
-
-        ws.onopen = () => {
-          connecting = false;
-          connected = true;
-          setStatus("Connected · Interviewer ready", true);
-          setInputEnabled(true);
-
-          appendMessage(
-            "system",
-            currentTopic
-              ? `Session started on topic: "${currentTopic}". The AI interviewer will ask one question at a time about this area. Type your answers below. Type 'exit' to end the interview.`
-              : "Session started. The AI interviewer will ask one AI/ML question at a time. Type your answers below. Type 'exit' to end the interview."
-          );
-
-          ws.send(
-            JSON.stringify({
-              message:
-                "Hi, I'm ready to start the interview. Please begin with the first question.",
-              topic: currentTopic,
-            })
-          );
-        };
-
-        ws.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (data.role !== "interviewer") return;
-
-            // Streaming chunks
-            if (Object.prototype.hasOwnProperty.call(data, "delta")) {
-              const delta = data.delta || "";
-              if (!delta) return;
-
-              // Create a bubble for this question if it does not exist yet
-              if (!activeInterviewerBubble) {
-                const row = document.createElement("div");
-                row.className = "msg-row interviewer";
-
-                const avatar = document.createElement("div");
-                avatar.className = "avatar interviewer";
-                avatar.textContent = "AI";
-
-                const bubble = document.createElement("div");
-                bubble.className = "bubble interviewer";
-                bubble.textContent = "";
-
-                row.appendChild(avatar);
-                row.appendChild(bubble);
-                messagesEl.appendChild(row);
-                activeInterviewerBubble = bubble;
-              }
-
-              activeInterviewerBubble.textContent += delta;
-              messagesEl.scrollTop = messagesEl.scrollHeight;
-              return;
-            }
-
-            // Final "done" message for the question
-            if (data.message) {
-              if (!activeInterviewerBubble) {
-                appendMessage("interviewer", data.message);
-              } else {
-                activeInterviewerBubble.textContent = data.message;
-                appendHistory("interviewer", data.message);
-              }
-              activeInterviewerBubble = null;
-            }
-          } catch (err) {
-            console.error("Invalid message from server:", err);
-          }
-        };
-
-        ws.onerror = () => {
-          showError(
-            "Error connecting to backend. Make sure `uvicorn backend:app --reload` is running."
-          );
-          setStatus("Connection error", false, true);
-          setInputEnabled(false);
-        };
-
-        ws.onclose = () => {
-          connected = false;
-          connecting = false;
-          setStatus("Disconnected", false, true);
-          setInputEnabled(false);
-        };
-      }
-
-      function sendMessage() {
-        const text = inputEl.value.trim();
-        if (!text || !ws || ws.readyState !== WebSocket.OPEN) {
-          return;
-        }
-
-        appendMessage("candidate", text);
-        ws.send(
-          JSON.stringify({
-            message: text,
-          })
-        );
-        inputEl.value = "";
-      }
-
-      function showTopicSelection() {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.close();
-        }
-        topicScreen.style.display = "flex";
-        chatView.style.display = "none";
-        messagesEl.innerHTML = "";
-        activeInterviewerBubble = null;
-        currentTopic = "";
-        currentSessionId = null;
-        setInputEnabled(false);
-        setStatus("Idle · Choose a topic", false);
-        topicInputEl.focus();
-        renderSessionList();
-      }
-
-      function startSession() {
-        const topic = (topicInputEl.value || "").trim();
-        topicScreen.style.display = "none";
-        chatView.style.display = "flex";
-
-        messagesEl.innerHTML = "";
-        activeInterviewerBubble = null;
-
-        // Create a new session entry
-        const newSession = {
-          id: Date.now().toString(),
-          topic,
-          createdAt: new Date().toISOString(),
-          messages: [],
-        };
-        sessions.push(newSession);
-        currentSessionId = newSession.id;
-        saveSessions();
-        renderSessionList();
-
-        connect(topic);
-      }
-
-      sendBtn.addEventListener("click", () => {
-        sendMessage();
-      });
-
-      inputEl.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && !event.shiftKey) {
-          event.preventDefault();
-          sendMessage();
-        }
-      });
-
-      startBtn.addEventListener("click", () => {
-        startSession();
-      });
-
-      topicInputEl.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          startSession();
-        }
-      });
-
-      newSessionBtn.addEventListener("click", () => {
-        showTopicSelection();
-      });
-
-      window.addEventListener("load", () => {
-        loadSessions();
-        showTopicSelection();
-      });
-    </script>
-  </body>
 </html>
-
