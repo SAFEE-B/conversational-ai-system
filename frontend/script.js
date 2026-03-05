@@ -17,8 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const welcomeTime = document.getElementById('welcome-time');
 
     /* ─── State ─────────────────────────────────────────── */
-    const API_BASE = `http://${window.location.hostname || 'localhost'}:8000`;
-    const WS_BASE = `ws://${window.location.hostname || 'localhost'}:8000`;
+    // API_BASE and WS_BASE are defined in config.js
 
     // Persist session list locally (keyed by session_id → title)
     const LOCAL_KEY = 'hf_sessions'; // list of { session_id, title }

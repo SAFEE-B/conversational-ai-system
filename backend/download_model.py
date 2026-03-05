@@ -2,7 +2,7 @@ import os
 from huggingface_hub import hf_hub_download
 
 repo_id = "Qwen/Qwen2.5-0.5B-Instruct-GGUF"
-filename = "qwen2.5-0.5b-instruct-q8_0.gguf"
+filename = "qwen2.5-0.5b-instruct-q4_k_m.gguf"
 
 print(f"Downloading {filename} from {repo_id}...")
 model_path = hf_hub_download(

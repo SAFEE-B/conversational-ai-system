@@ -15,11 +15,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application source code
 COPY . .
 
-# Ensure models directory exists (the model gguf should be placed here)
+# Ensure models directory exists
 RUN mkdir -p models
 
-# Expose FastAPI port
+# Make startup script executable
+RUN chmod +x start.sh
+
 EXPOSE 8000
 
-# Run Uvicorn worker
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# start.sh downloads the model if missing, then runs uvicorn
+CMD ["bash", "start.sh"]
+

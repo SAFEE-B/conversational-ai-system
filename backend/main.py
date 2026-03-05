@@ -17,7 +17,7 @@ conversation_manager: ConversationManager = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global llm_engine, conversation_manager
-    model_path = "models/qwen2.5-0.5b-instruct-q8_0.gguf"
+    model_path = "models/qwen2.5-0.5b-instruct-q4_k_m.gguf"
     try:
         llm_engine = LLMEngine(model_path=model_path)
         logger.info("LLM Engine initialized successfully.")
