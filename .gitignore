@@ -1,18 +1,41 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
-
-# Local secrets / config
+*.pyc
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
 .env
 
-# Local models (too large for GitHub)
-models/*.gguf
-models/**/*.gguf
+# Model files (large binary - never commit!)
+backend/models/*.gguf
+backend/models/*.bin
+backend/models/.huggingface/
 
-# OS / editor noise
+# Docker
+.dockerignore
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
 Thumbs.db
-.vscode/
+desktop.ini
 
+# Logs
+*.log
+
+# Hugging Face cache
+.cache/

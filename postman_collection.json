@@ -1,48 +1,31 @@
 {
-  "info": {
-    "name": "Conversational AI System",
-    "_postman_id": "c2e7e7f4-0000-0000-0000-000000000000",
-    "description": "Postman collection for testing the FastAPI backend of the local conversational AI system.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Healthcheck",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://127.0.0.1:8000/api/health",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "8000",
-          "path": ["api", "health"]
-        }
-      }
-    },
-    {
-      "name": "Single-turn chat (REST)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"topic\": \"transformers and attention\",\n  \"history\": [],\n  \"message\": \"Hi, I'm ready to start the interview. Please begin.\"\n}"
-        },
-        "url": {
-          "raw": "http://127.0.0.1:8000/api/chat",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "8000",
-          "path": ["api", "chat"]
-        }
-      }
-    }
-  ]
+	"info": {
+		"_postman_id": "d0ea7f62-1b15-46aa-a335-cbaaf37a91eb",
+		"name": "HealthFirst Pharmacy Assistant",
+		"description": "Collection to test the Pharmacy Conversational AI WebSocket endpoint.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Chat Session Endpoint",
+			"request": {
+				"method": "OPTIONS",
+				"header": [],
+				"url": {
+					"raw": "ws://localhost:8000/ws/chat",
+					"protocol": "ws",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"ws",
+						"chat"
+					]
+				},
+				"description": "This is a WebSocket mock request. To actually test the websocket, change to WebSocket request mode in Postman and send `{\"type\": \"message\", \"content\": \"Do you have Tylenol?\"}`"
+			},
+			"response": []
+		}
+	]
 }
-
