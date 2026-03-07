@@ -114,7 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
         avatarDiv.className = 'msg-avatar';
 
         if (role === 'user') {
-            avatarDiv.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+            // No avatar needed for user in new design
+            avatarDiv.style.display = 'none';
         } else if (role === 'error') {
             avatarDiv.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
         } else {
@@ -351,9 +352,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    /* ─── Mobile sidebar ────────────────────────────────── */
+    /* ─── Sidebar toggle ─────────────────────────────────── */
+    function isMobile() { return window.innerWidth <= 680; }
+
     function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('visible'); }
     function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('visible'); }
-    menuBtn.addEventListener('click', openSidebar);
+
+    function toggleSidebar() {
+        if (isMobile()) {
+            // Mobile: drawer with overlay
+            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        } else {
+            // Desktop: collapse/expand the sidebar panel inline
+            sidebar.classList.toggle('collapsed');
+        }
+    }
+
+    menuBtn.addEventListener('click', toggleSidebar);
     sidebarOverlay.addEventListener('click', closeSidebar);
 });
