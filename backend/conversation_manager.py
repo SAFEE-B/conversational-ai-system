@@ -2,6 +2,20 @@ import uuid
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 
+# ─── SNR: known low-information filler phrases ────────────────────────────────
+# User messages whose normalised text matches one of these are treated as noise
+# and suppressed from the older portion of the context window before sending to
+# the LLM.  The raw session store is never modified — only the LLM view changes.
+_FILLER_PATTERNS = {
+    "ok", "okay", "sure", "yes", "no", "thanks", "thank you",
+    "got it", "alright", "fine", "great", "cool", "yep", "nope",
+    "lol", "haha", "hmm", "i see", "understood", "makes sense",
+    "good", "nice", "perfect", "sounds good", "not really",
+}
+
+# How many most-recent messages are always kept verbatim (never noise-filtered)
+_RECENT_CUTOFF = 4
+
 SYSTEM_PROMPT = """You are a helpful, professional Pharmacy Assistant at 'HealthFirst Community Pharmacy'.
 Your role is to assist customers with:
 - Checking general availability of over-the-counter (OTC) medications.
@@ -40,10 +54,57 @@ class ConversationManager:
         }
         return sid
 
+    # ─── SNR helpers ──────────────────────────────────────────────────────────
+
+    def _is_noise(self, message: str) -> bool:
+        """
+        Return True if the user message carries negligible semantic content.
+
+        A message is noise if:
+        - Its normalised form matches a known filler phrase, OR
+        - It is very short (≤ 8 chars) AND does not contain a question mark
+          (short questions like "Why?" or "How?" are always signal).
+        """
+        cleaned = message.strip().lower().rstrip("!.,?")
+        if cleaned in _FILLER_PATTERNS:
+            return True
+        if len(cleaned) <= 8 and "?" not in message:
+            return True
+        return False
+
+    # ─── Context retrieval ────────────────────────────────────────────────────
+
     def get_messages(self, session_id: str) -> List[Dict[str, str]]:
+        """
+        Return context messages for the LLM, with noise filtered from older turns.
+
+        Strategy (Signal-to-Noise filtering):
+        - The system prompt is always kept at index 0.
+        - The most recent `_RECENT_CUTOFF` messages are always kept verbatim so
+          the model has immediate conversational context with full fidelity.
+        - Messages older than that cutoff are passed through `_is_noise()`: filler
+          user turns are dropped, freeing context budget for substantive history.
+        - The raw session store (self.sessions) is never mutated by this method.
+        """
         if session_id not in self.sessions:
             return []
-        return self.sessions[session_id]
+        history = self.sessions[session_id]
+        system = [history[0]]       # index 0 is always the system prompt
+        conversation = history[1:]  # everything after the system prompt
+
+        # Short sessions: nothing old enough to filter yet
+        if len(conversation) <= _RECENT_CUTOFF:
+            return system + conversation
+
+        older = conversation[:-_RECENT_CUTOFF]
+        recent = conversation[-_RECENT_CUTOFF:]
+
+        filtered_older = [
+            m for m in older
+            if not (m["role"] == "user" and self._is_noise(m["content"]))
+        ]
+
+        return system + filtered_older + recent
 
     def get_display_history(self, session_id: str) -> List[Dict[str, str]]:
         """Return only user/assistant messages (skip system prompt) for frontend rendering."""
