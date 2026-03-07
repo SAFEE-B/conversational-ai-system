@@ -6,7 +6,12 @@ no FastAPI app, no LLM engine, no network I/O required.
 """
 
 import pytest
-from conversation_manager import ConversationManager, SYSTEM_PROMPT
+from conversation_manager import (
+    ConversationManager,
+    SYSTEM_PROMPT,
+    _FILLER_PATTERNS,
+    _RECENT_CUTOFF,
+)
 
 
 # ─── Fixtures ────────────────────────────────────────────────────────────────
@@ -295,3 +300,219 @@ class TestListSessions:
         cm.delete_session(sid)
         ids = [s["session_id"] for s in cm.list_sessions()]
         assert "will-be-deleted" not in ids
+
+
+# ─── SNR: _is_noise() ────────────────────────────────────────────────────
+
+class TestIsNoise:
+
+    def test_known_filler_word_is_noise(self, cm):
+        for word in ["ok", "sure", "thanks", "yep", "got it", "alright"]:
+            assert cm._is_noise(word) is True, f"Expected '{word}' to be noise"
+
+    def test_filler_with_punctuation_is_noise(self, cm):
+        # Trailing punctuation should be stripped before matching
+        assert cm._is_noise("ok!") is True
+        assert cm._is_noise("thanks.") is True
+        assert cm._is_noise("sure,") is True
+
+    def test_filler_with_surrounding_whitespace_is_noise(self, cm):
+        assert cm._is_noise("  ok  ") is True
+
+    def test_filler_is_case_insensitive(self, cm):
+        assert cm._is_noise("OK") is True
+        assert cm._is_noise("Thanks") is True
+        assert cm._is_noise("SURE") is True
+
+    def test_very_short_non_question_is_noise(self, cm):
+        # 8 chars or fewer and no '?' → noise
+        assert cm._is_noise("hi") is True
+        assert cm._is_noise("bye") is True
+        assert cm._is_noise("lol") is True
+
+    def test_short_question_is_signal(self, cm):
+        # Short but contains '?' → NOT noise (e.g. "Why?" "How?" "Hours?")
+        assert cm._is_noise("Why?") is False
+        assert cm._is_noise("How?") is False
+        assert cm._is_noise("Hours?") is False
+
+    def test_substantive_question_is_signal(self, cm):
+        assert cm._is_noise("Do you carry ibuprofen?") is False
+        assert cm._is_noise("What are your opening hours?") is False
+        assert cm._is_noise("Can I get vitamin C supplements?") is False
+
+    def test_substantive_statement_is_signal(self, cm):
+        assert cm._is_noise("I have a headache and need something for pain.") is False
+        assert cm._is_noise("Tell me about your OTC allergy medicines.") is False
+
+    def test_all_filler_patterns_recognised(self, cm):
+        """Every entry in _FILLER_PATTERNS must be classified as noise."""
+        for phrase in _FILLER_PATTERNS:
+            assert cm._is_noise(phrase) is True, f"'{phrase}' should be noise"
+
+
+# ─── SNR: get_messages() context filtering ─────────────────────────────────────
+
+class TestGetMessagesNoiseFiltration:
+
+    def _build_session(self, cm, turns):
+        """Helper: create a session and add (role, content) turns in order."""
+        sid = cm.create_session()
+        for role, content in turns:
+            if role == "user":
+                cm.add_user_message(sid, content)
+            else:
+                cm.add_assistant_message(sid, content)
+        return sid
+
+    def test_system_prompt_always_present_at_index_0(self, cm):
+        sid = self._build_session(cm, [
+            ("user", "ok"), ("assistant", "How can I help?"),
+            ("user", "thanks"), ("assistant", "You're welcome!"),
+            ("user", "Do you carry paracetamol?"),
+        ])
+        msgs = cm.get_messages(sid)
+        assert msgs[0]["role"] == "system"
+        assert msgs[0]["content"] == SYSTEM_PROMPT
+
+    def test_short_session_returns_all_messages_unfiltered(self, cm):
+        """Sessions with <= _RECENT_CUTOFF conversation turns are never filtered."""
+        sid = cm.create_session()
+        cm.add_user_message(sid, "ok")              # noise, but recent
+        cm.add_assistant_message(sid, "How can I help?")
+        msgs = cm.get_messages(sid)
+        # system + 2 messages, nothing dropped
+        assert len(msgs) == 3
+
+    def test_noise_in_older_turns_is_filtered_out(self, cm):
+        """
+        Filler user messages outside the recent window must be dropped from the
+        LLM context (but NOT from self.sessions).
+        """
+        turns = [
+            ("user",      "Do you carry ibuprofen?"),   # signal — old
+            ("assistant", "Yes, we stock ibuprofen."),
+            ("user",      "thanks"),                    # noise — old
+            ("assistant", "You're welcome!"),
+            # ─── recent cutoff boundary ───
+            ("user",      "ok"),                        # noise — but recent: kept
+            ("assistant", "Anything else?"),
+            ("user",      "What are your hours?"),       # signal — recent: kept
+            ("assistant", "Mon–Sat 8AM–9PM."),
+        ]
+        sid = self._build_session(cm, turns)
+        msgs = cm.get_messages(sid)
+        contents = [m["content"] for m in msgs]
+
+        # The old filler "thanks" must be gone from LLM context
+        assert "thanks" not in contents
+        # The old signal must still be present
+        assert "Do you carry ibuprofen?" in contents
+        # Recent noise ("ok") must still be present
+        assert "ok" in contents
+
+    def test_substantive_older_messages_are_not_filtered(self, cm):
+        turns = [
+            ("user",      "Can I get vitamin D?"),       # signal — old
+            ("assistant", "Yes, we carry vitamin D3."),
+            ("user",      "sure"),                      # noise — old
+            ("assistant", "Let me know if you need more info."),
+            ("user",      "What about vitamin C?"),      # signal — recent
+            ("assistant", "Yes, we have that too."),
+            ("user",      "Great, thanks"),
+            ("assistant", "Happy to help!"),
+        ]
+        sid = self._build_session(cm, turns)
+        msgs = cm.get_messages(sid)
+        contents = [m["content"] for m in msgs]
+        assert "Can I get vitamin D?" in contents
+
+    def test_raw_session_store_unaffected_by_noise_filtering(self, cm):
+        """
+        get_messages() must not mutate self.sessions — the raw store must
+        still contain the filler messages even after filtering.
+        """
+        turns = [
+            ("user",      "Do you carry aspirin?"),
+            ("assistant", "Yes."),
+            ("user",      "ok"),
+            ("assistant", "Anything else?"),
+            ("user",      "Do you carry ibuprofen?"),
+            ("assistant", "Yes."),
+            ("user",      "sure"),
+            ("assistant", "Let me know!"),
+        ]
+        sid = self._build_session(cm, turns)
+        cm.get_messages(sid)   # trigger filtering view
+        # Raw store must still contain all messages
+        raw_contents = [m["content"] for m in cm.sessions[sid]]
+        assert "ok" in raw_contents
+        assert "sure" in raw_contents
+
+    def test_recent_cutoff_messages_never_filtered_even_if_noise(self, cm):
+        """
+        The last _RECENT_CUTOFF messages must always be kept, even if they
+        are all filler.
+        """
+        # Build enough turns to push something into the 'older' window
+        turns = [
+            ("user",      "Do you carry aspirin?"),   # old — signal
+            ("assistant", "Yes."),
+        ] + [
+            (m, "ok") if m == "user" else (m, "sure thing")
+            for m in ["user", "assistant"] * (_RECENT_CUTOFF // 2)
+        ]
+        sid = self._build_session(cm, turns)
+        msgs = cm.get_messages(sid)
+        # The last _RECENT_CUTOFF messages must all still be there
+        recent_contents = [m["content"] for m in msgs[-_RECENT_CUTOFF:]]
+        # They came from our filler turns but must be present
+        assert len(recent_contents) == _RECENT_CUTOFF
+
+    def test_multiple_noise_turns_all_filtered_from_older_window(self, cm):
+        # 10 conversation turns: _RECENT_CUTOFF=4 means turns 1-6 are "older",
+        # turns 7-10 are "recent". All three noise turns (1, 3, 5) are in older.
+        turns = [
+            ("user",      "ok"),                       # noise — old
+            ("assistant", "reply 1"),
+            ("user",      "sure"),                     # noise — old
+            ("assistant", "reply 2"),
+            ("user",      "yep"),                      # noise — old
+            ("assistant", "reply 3"),
+            # ── recent cutoff boundary ──────────────────
+            ("user",      "Do you have paracetamol?"), # signal — recent
+            ("assistant", "Yes we do."),
+            ("user",      "What about aspirin?"),      # signal — recent
+            ("assistant", "Yes, aspirin too."),
+        ]
+        sid = self._build_session(cm, turns)
+        msgs = cm.get_messages(sid)
+        user_msgs = [m["content"] for m in msgs if m["role"] == "user"]
+        # All three old filler turns must be gone
+        assert "ok" not in user_msgs
+        assert "sure" not in user_msgs
+        assert "yep" not in user_msgs
+        # The substantive recent turns must survive
+        assert "Do you have paracetamol?" in user_msgs
+        assert "What about aspirin?" in user_msgs
+
+    def test_assistant_messages_never_noise_filtered(self, cm):
+        """
+        Noise filtering applies only to user messages; assistant messages
+        in the older window must always be kept.
+        """
+        turns = [
+            ("user",      "Do you have aspirin?"),
+            ("assistant", "Yes."),          # short assistant reply — must NOT be filtered
+            ("user",      "ok"),
+            ("assistant", "ok"),            # looks like filler but role=assistant
+            ("user",      "What are your hours?"),
+            ("assistant", "Mon–Sat 8–9PM."),
+            ("user",      "Any Sunday hours?"),
+            ("assistant", "Sun 10AM–6PM."),
+        ]
+        sid = self._build_session(cm, turns)
+        msgs = cm.get_messages(sid)
+        assistant_contents = [m["content"] for m in msgs if m["role"] == "assistant"]
+        # Short assistant replies like "Yes." and "ok" must still be present
+        assert "Yes." in assistant_contents
