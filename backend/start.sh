@@ -20,5 +20,16 @@ hf_hub_download(
     echo "Download complete."
 fi
 
+# ─── Voice models (ASR + TTS) ───────────────────────────────────────────────
+VOSK_MODEL_DIR="$MODEL_DIR/vosk-model-en-us-0.22-lgraph"
+PIPER_ONNX="$MODEL_DIR/piper-voices/en/en_US/ryan/low/en_US-ryan-low.onnx"
+PIPER_JSON="$MODEL_DIR/piper-voices/en/en_US/ryan/low/en_US-ryan-low.onnx.json"
+
+if [ ! -f "$PIPER_ONNX" ] || [ ! -f "$PIPER_JSON" ] || [ ! -d "$VOSK_MODEL_DIR/conf" ]; then
+    echo "Voice models not found. Downloading Vosk + Piper..."
+    python download_voice_models.py
+    echo "Voice model download complete."
+fi
+
 # Start the FastAPI server
 exec uvicorn main:app --host 0.0.0.0 --port 8000

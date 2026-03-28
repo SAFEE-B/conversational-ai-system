@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatTitle = document.getElementById('chat-title');
     const chips = document.querySelectorAll('.chip');
     const welcomeTime = document.getElementById('welcome-time');
+    const voiceBtn = document.getElementById('voice-btn');
+    const voiceStopBtn = document.getElementById('voice-stop-btn');
 
     /* ─── State ─────────────────────────────────────────── */
     // API_BASE and WS_BASE are defined in config.js
@@ -27,6 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentMsg = null;   // DOM element being streamed into
     let isGenerating = false;
     let pendingSessionId = null;  // session_id requested but waiting for server ack
+    let isRecording = false;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let currentAudio = null;
+    // Ensure audio chunks play in order.
+    let audioChain = Promise.resolve();
+    let audioGenerationId = 0;
 
     /* ─── Helpers ───────────────────────────────────────── */
     welcomeTime.textContent = formatTime();
@@ -39,6 +48,119 @@ document.addEventListener('DOMContentLoaded', () => {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
+    function stopAudioPlayback() {
+        audioGenerationId += 1;
+        if (currentAudio) {
+            try { currentAudio.pause(); } catch { }
+            currentAudio = null;
+        }
+        audioChain = Promise.resolve();
+    }
+
+    function blobToBase64(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                try {
+                    const dataUrl = reader.result;
+                    const b64 = dataUrl.split(',')[1];
+                    resolve(b64);
+                } catch (e) {
+                    reject(e);
+                }
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    function playWavBase64(audioB64) {
+        // Creates a standalone WAV data URI and plays it.
+        // We chain them so playback stays in order.
+        return new Promise((resolve) => {
+            const audio = new Audio(`data:audio/wav;base64,${audioB64}`);
+            currentAudio = audio;
+            audio.onended = () => resolve();
+            audio.onerror = () => resolve();
+            audio.play().catch(() => resolve());
+        });
+    }
+
+    function setVoiceButtonsRecording(recording) {
+        isRecording = recording;
+        if (voiceBtn) voiceBtn.style.display = recording ? 'none' : '';
+        if (voiceStopBtn) voiceStopBtn.style.display = recording ? '' : 'none';
+        updateSendBtn();
+    }
+
+    async function startVoiceCapture() {
+        if (!ws || ws.readyState !== WebSocket.OPEN) return;
+        if (isGenerating || isRecording) return;
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            chatBox.appendChild(createMessageElement('error', 'Voice input is not supported in this browser.'));
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            const candidates = [
+                'audio/webm;codecs=opus',
+                'audio/webm',
+                'audio/ogg;codecs=opus',
+                'audio/ogg',
+            ];
+            const mimeType = candidates.find(t => MediaRecorder.isTypeSupported(t)) || '';
+
+            recordedChunks = [];
+            mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+                try {
+                    setVoiceButtonsRecording(false);
+                    // Stop the mic tracks.
+                    stream.getTracks().forEach(t => t.stop());
+
+                    if (!recordedChunks.length) return;
+
+                    const mime = mediaRecorder.mimeType || 'audio/webm';
+                    const blob = new Blob(recordedChunks, { type: mime });
+                    const audioB64 = await blobToBase64(blob);
+                    const inputExt = mime.includes('webm') ? 'webm' : (mime.includes('ogg') ? 'ogg' : 'webm');
+
+                    // Mark generating to disable text controls while voice is processed.
+                    isGenerating = true;
+                    updateSendBtn();
+
+                    ws.send(JSON.stringify({ type: 'voice_message', audio_base64: audioB64, input_ext: inputExt }));
+                } catch {
+                    isGenerating = false;
+                    updateSendBtn();
+                    chatBox.appendChild(createMessageElement('error', 'Could not send voice audio.'));
+                    scrollToBottom();
+                }
+            };
+
+            setVoiceButtonsRecording(true);
+            mediaRecorder.start();
+        } catch {
+            setVoiceButtonsRecording(false);
+            chatBox.appendChild(createMessageElement('error', 'Microphone permission denied.'));
+            scrollToBottom();
+        }
+    }
+
+    function stopVoiceCapture() {
+        if (!mediaRecorder) return;
+        if (mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+    }
+
     function setStatus(s) {
         statusDot.className = 'status-pulse ' + s;
         statusLabel.textContent = s === 'connecting' ? 'Connecting…'
@@ -48,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSendBtn() {
         sendBtn.disabled = messageInput.value.trim() === '' || isGenerating
+            || isRecording
             || !ws || ws.readyState !== WebSocket.OPEN;
     }
 
@@ -183,6 +306,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSession = null;
         while (chatBox.children.length > 1) chatBox.removeChild(chatBox.lastChild);
         chatTitle.textContent = 'HealthFirst Assistant';
+        stopVoiceCapture();
+        stopAudioPlayback();
         isGenerating = false;
         currentMsg = null;
         closeSidebar();
@@ -228,6 +353,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         restoreHistory(currentSession);
                     }
                     renderSessionList();
+                    return;
+                }
+
+                if (data.type === 'voice_transcript') {
+                    // Render the ASR transcript as a user message bubble.
+                    if (data.content) {
+                        chatBox.appendChild(createMessageElement('user', data.content));
+                        scrollToBottom();
+                    }
+                    return;
+                }
+
+                if (data.type === 'audio_chunk') {
+                    if (data.audio_base64) {
+                        const genId = audioGenerationId;
+                        audioChain = audioChain.then(() => {
+                            if (genId !== audioGenerationId) return;
+                            return playWavBase64(data.audio_base64);
+                        });
+                    }
                     return;
                 }
 
@@ -311,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chatForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const content = messageInput.value.trim();
-        if (!content || isGenerating || !ws || ws.readyState !== WebSocket.OPEN) return;
+        if (!content || isGenerating || isRecording || !ws || ws.readyState !== WebSocket.OPEN) return;
 
         chatBox.appendChild(createMessageElement('user', content));
         scrollToBottom();
@@ -334,6 +479,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ws.send(JSON.stringify({ type: 'reset' }));
         while (chatBox.children.length > 1) chatBox.removeChild(chatBox.lastChild);
         chatTitle.textContent = 'HealthFirst Assistant';
+        stopVoiceCapture();
+        setVoiceButtonsRecording(false);
+        stopAudioPlayback();
         isGenerating = false;
         currentMsg = null;
         updateSendBtn();
@@ -342,9 +490,14 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ─── New chat ──────────────────────────────────────── */
     newChatBtn.addEventListener('click', startNewChat);
 
+    /* ─── Voice controls ───────────────────────────────── */
+    if (voiceBtn) voiceBtn.addEventListener('click', startVoiceCapture);
+    if (voiceStopBtn) voiceStopBtn.addEventListener('click', stopVoiceCapture);
+
     /* ─── Chips ─────────────────────────────────────────── */
     chips.forEach(chip => {
         chip.addEventListener('click', () => {
+            if (isRecording || isGenerating) return;
             messageInput.value = chip.dataset.msg;
             messageInput.dispatchEvent(new Event('input'));
             messageInput.focus();

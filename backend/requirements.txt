@@ -4,3 +4,6 @@ uvicorn==0.30.0
 llama-cpp-python==0.3.1
 huggingface-hub==0.23.2
 pydantic==2.7.4
+vosk
+piper-tts
+onnxruntime
