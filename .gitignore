@@ -18,6 +18,8 @@ env/
 backend/models/*.gguf
 backend/models/*.bin
 backend/models/.huggingface/
+backend/models/.cache_vosk/
+backend/models/piper-voices/
 
 # Docker
 .dockerignore
