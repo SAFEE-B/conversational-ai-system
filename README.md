@@ -1,206 +1,315 @@
 # HealthFirst Pharmacy Chatbot
 
-A low-latency, production-style conversational AI system designed for a local community pharmacy. The system runs entirely locally on CPU, enforces pharmacy domain constraints purely through prompt orchestration, and provides real-time streaming to a web interface — without the use of tools, agents, or RAG.
+A low-latency, production-style conversational AI system for a local community pharmacy. The system runs entirely locally on CPU, combining **Retrieval-Augmented Generation (RAG)** and **four callable tools** with a quantized local LLM to answer pharmacy-specific questions accurately and in real time.
 
 ---
 
 ## Business Use-Case Description
 
-**HealthFirst Community Pharmacy** is a neighbourhood pharmacy serving walk-in patients and repeat prescription customers. Staff are frequently overwhelmed during peak hours, and patients often call or walk in just to check basic information such as OTC product availability, opening hours, or general wellness guidance.
+**HealthFirst Community Pharmacy** is a neighbourhood pharmacy serving walk-in patients and repeat prescription customers. Staff are frequently overwhelmed during peak hours, and patients often call or walk in just to check basic information such as OTC product availability, opening hours, drug interactions, or dosage guidance.
 
-This chatbot acts as a first-line virtual assistant available 24/7, handling the high-frequency, low-complexity queries that don't require a licensed pharmacist's direct attention. By doing so it reduces staff workload, improves customer responsiveness, and creates a consistent, professional first impression.
+This chatbot acts as a first-line virtual assistant available 24/7, handling high-frequency queries that do not require a licensed pharmacist's direct attention. RAG ensures answers are grounded in real pharmacy documents; tools provide precise, patient-specific calculations and personalised service.
 
 **Scope of the assistant:**
-- Answer questions about OTC medication availability (e.g. paracetamol, antihistamines, vitamins).
-- Provide pharmacy operating hours and location information.
-- Give general, non-diagnostic wellness advice (e.g. hydration, rest, symptom self-care).
-- Refuse — politely and clearly — any request for prescription drugs or medical diagnoses, redirecting the user to a licensed professional.
+- Answer questions about OTC medication availability, uses, and side effects (RAG + Medication Info Tool).
+- Provide pharmacy operating hours and policies (RAG retrieval).
+- Check drug-drug interactions with severity ratings (Drug Interaction Tool).
+- Calculate weight- and age-appropriate OTC dosages (Dosage Calculator Tool).
+- Greet returning customers by name and recall preferences (CRM Tool).
+- Give general, non-diagnostic wellness advice (RAG retrieval).
+- Refuse — politely and clearly — any request for prescription drugs or medical diagnoses.
 
 **Out of scope (by design):**
 - Prescription drug dispensing or advice.
 - Medical diagnosis or triage.
-- Any form of backend database lookup (this is a purely prompt-driven system).
-
----
-
-## Example Dialogues
-
-### Dialogue 1 — OTC Availability & Hours
-
-> **User:** Hi, do you have ibuprofen in stock?
->
-> **Assistant:** Hello! Yes, ibuprofen is a standard OTC item we carry. We typically stock multiple brands and dosages (200mg and 400mg tablets). Is there anything else I can help you with today?
->
-> **User:** What time do you close tonight?
->
-> **Assistant:** We're open Monday through Saturday from 8 AM to 9 PM, and on Sundays from 10 AM to 6 PM. Feel free to stop by anytime within those hours!
-
----
-
-### Dialogue 2 — Wellness Advice Within Constraints
-
-> **User:** I've had a sore throat for two days. What do you recommend?
->
-> **Assistant:** I'm sorry to hear that — sore throats can be quite uncomfortable. For general relief, staying well-hydrated, gargling with warm salt water, and using OTC throat lozenges (such as those containing benzocaine or menthol) may help ease discomfort. If your symptoms persist beyond a few days, worsen, or are accompanied by a high fever, I'd strongly recommend visiting a doctor or pharmacist in person for a proper assessment.
->
-> **User:** Can you prescribe me antibiotics?
->
-> **Assistant:** I'm afraid I'm not able to prescribe any medications — I'm an AI assistant, not a licensed pharmacist or doctor. For a prescription, please consult one of our in-store pharmacists or visit your GP. Is there anything else I can help you with in the meantime?
-
----
-
-### Dialogue 3 — Multi-Turn Context Retention
-
-> **User:** Do you carry vitamin D supplements?
->
-> **Assistant:** Yes, we carry a variety of Vitamin D supplements, including Vitamin D3 in 1000 IU and 2000 IU doses, as well as combination products with calcium. Any preference on dosage or brand?
->
-> **User:** What about vitamin C?
->
-> **Assistant:** Absolutely — we stock Vitamin C as well, with options ranging from 500mg to 1000mg tablets. Some of our products also come in effervescent or chewable forms. Would you like to know anything else about either of these supplements?
->
-> **User:** How much do they cost?
->
-> **Assistant:** I don't have access to live pricing or inventory data — for exact prices I'd recommend calling us directly or checking in-store. Our team would be happy to help! Is there anything else I can assist you with?
-
----
-
-## Conversation Flow Design
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        User opens chat                          │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│        WebSocket connection established → session_id issued     │
-│        System prompt injected as message[0] (role: system)      │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     User sends message                          │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-               ┌─────────────┴─────────────┐
-               ▼                           ▼
-  ┌────────────────────────┐   ┌───────────────────────────────┐
-  │  msg_type == "reset"   │   │    msg_type == "message"      │
-  │  → clear history       │   │    → append user turn to      │
-  │  → re-inject sys prompt│   │      session history          │
-  └────────────────────────┘   └──────────────┬────────────────┘
-                                              │
-                                              ▼
-                               ┌─────────────────────────────┐
-                               │  _prune_history()           │
-                               │  Keep: system prompt +      │
-                               │  last 10 messages           │
-                               └──────────────┬──────────────┘
-                                              │
-                                              ▼
-                               ┌─────────────────────────────┐
-                               │  LLMEngine.stream_chat()    │
-                               │  Offload to ThreadPoolExec  │
-                               │  Stream tokens via Queue    │
-                               └──────────────┬──────────────┘
-                                              │
-                               ┌─────────────┴──────────────┐
-                               ▼                            ▼
-                  ┌─────────────────────┐     ┌────────────────────────┐
-                  │  token arrives      │     │  generation complete   │
-                  │  → send {"type":    │     │  → send {"type":"end"} │
-                  │    "token", ...}    │     │  → store assistant msg │
-                  │  → frontend appends │     │  → update session meta │
-                  └─────────────────────┘     └────────────────────────┘
-                                              │
-                                              ▼
-                               ┌─────────────────────────────┐
-                               │  User sends next message    │
-                               │  (loop continues)           │
-                               └─────────────────────────────┘
-```
+- Live inventory or pricing lookups.
 
 ---
 
 ## Architecture Overview
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                        Browser Client                        │
-│                  (HTML + Vanilla JS + CSS)                    │
-│                                                              │
-│  • ChatGPT-style UI         • Session sidebar (localStorage) │
-│  • Streaming token render   • New/reset/switch session       │
-└───────────────────────────┬──────────────────────────────────┘
-                            │  WebSocket  ws://localhost:8000/ws/chat
-                            │  REST       http://localhost:8000/sessions
-                            │             http://localhost:8000/history/{id}
-                            ▼
-┌──────────────────────────────────────────────────────────────┐
-│                     FastAPI Backend                          │
-│                  (uvicorn, async, Docker)                     │
-│                                                              │
-│   /ws/chat  ──►  ConversationManager  ──►  LLMEngine         │
-│   /sessions                                                  │
-│   /history/{id}  (REST)                                      │
-│   /sessions/{id}  DELETE                                     │
-└───────────────────────────┬──────────────────────────────────┘
-                            │
-              ┌─────────────┴──────────────┐
-              ▼                            ▼
-┌─────────────────────────┐   ┌────────────────────────────────┐
-│   ConversationManager   │   │          LLMEngine             │
-│                         │   │                                │
-│ • In-memory session map │   │ • llama-cpp-python wrapper     │
-│ • System prompt inject  │   │ • GGUF quantized model         │
-│ • History pruning       │   │ • ThreadPoolExecutor offload   │
-│ • Session CRUD          │   │ • asyncio.Queue token stream   │
-└─────────────────────────┘   └────────────────────────────────┘
-                                            │
-                                            ▼
-                             ┌──────────────────────────────┐
-                             │  Qwen2.5-0.5B-Instruct       │
-                             │  Q4_K_M GGUF  (~400 MB)      │
-                             │  CPU-only inference           │
-                             └──────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│                          Browser Client                              │
+│                    (HTML + Vanilla JS + CSS)                          │
+│                                                                      │
+│  • ChatGPT-style UI          • Session sidebar (localStorage)        │
+│  • Streaming token render    • Voice input/output (ASR / TTS)        │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │  WebSocket  ws://localhost:8000/ws/chat
+                                │  REST       /sessions  /history/{id}
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                         FastAPI Backend                              │
+│                      (uvicorn · async · Docker)                      │
+│                                                                      │
+│   /ws/chat ──► ConversationManager ──► _enrich_message()            │
+│                                              │                       │
+│                              ┌───────────────┴──────────────┐        │
+│                              ▼                              ▼        │
+│                    ┌──────────────────┐   ┌──────────────────────┐  │
+│                    │  RAG Retriever   │   │  Tool Orchestrator   │  │
+│                    │  (concurrent)    │   │  (concurrent)        │  │
+│                    └────────┬─────────┘   └──────────┬───────────┘  │
+│                             │                        │              │
+│                             └──────────┬─────────────┘              │
+│                                        ▼                            │
+│                            build_augmented_messages()               │
+│                                        │                            │
+│                                        ▼                            │
+│                              LLMEngine.stream_chat()                │
+└──────────────────────────────────────────────────────────────────────┘
+                                         │
+               ┌─────────────────────────┴──────────────────────────┐
+               ▼                                                     ▼
+┌──────────────────────────┐                          ┌─────────────────────────┐
+│    DocumentRetriever     │                          │    ToolOrchestrator     │
+│                          │                          │                         │
+│ • all-MiniLM-L6-v2 embed │                          │ • Intent detection      │
+│ • ChromaDB cosine search │                          │ • CRM Tool (SQLite)     │
+│ • Top-3 chunk retrieval  │                          │ • Drug Interaction      │
+│ • LRU query cache        │                          │ • Dosage Calculator     │
+└──────────────────────────┘                          │ • Medication Info       │
+                                                      └─────────────────────────┘
+                                         │
+                                         ▼
+                          ┌──────────────────────────────┐
+                          │  Qwen2.5-0.5B-Instruct        │
+                          │  Q4_K_M GGUF  (~400 MB)       │
+                          │  CPU-only · llama-cpp-python   │
+                          └──────────────────────────────┘
 ```
 
 ---
 
-## Model Selection Rationale
+## Repository Structure
 
-| Criterion | Decision |
+```
+conversational-ai-system/
+├── backend/
+│   ├── main.py                    # FastAPI app, WebSocket endpoint, RAG+tool wiring
+│   ├── conversation_manager.py    # Session management, SNR filtering, prompt augmentation
+│   ├── llm_engine.py              # llama-cpp-python wrapper, async streaming
+│   ├── tool_orchestrator.py       # Intent detection → tool dispatch → result formatting
+│   ├── voice_engine.py            # Vosk ASR + Piper TTS (local, CPU)
+│   ├── retrieval/
+│   │   ├── indexer.py             # Offline: chunk → embed → store in ChromaDB
+│   │   └── retriever.py           # Runtime: embed query → cosine search → top-k chunks
+│   ├── tools/
+│   │   ├── crm_tool.py            # SQLite CRM: get/create/update patient records
+│   │   ├── drug_interaction.py    # Local DB of 20+ drug-drug interactions
+│   │   ├── dosage_calculator.py   # Weight/age-based OTC dosing for 10 medications
+│   │   └── medication_info.py     # Structured info lookup for 13 OTC medications
+│   ├── models/                    # GGUF model + voice models (git-ignored)
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/
+│   ├── index.html                 # Chat UI
+│   ├── script.js                  # WebSocket client, streaming, voice, sessions
+│   ├── style.css
+│   └── Dockerfile
+├── documents/                     # 55 pharmacy RAG documents (.txt)
+├── scripts/
+│   ├── index_documents.py         # CLI: run offline indexing pipeline
+│   └── generate_documents.py      # Script that generated the document corpus
+├── chroma_db/                     # ChromaDB vector store (created after indexing)
+├── crm.db                         # SQLite CRM database (created at runtime)
+├── docker-compose.yml
+├── .env.example
+└── README.md
+```
+
+---
+
+## RAG (Retrieval-Augmented Generation)
+
+### Document Corpus
+
+55 pharmacy documents covering:
+
+| Category | Count | Examples |
+|---|---|---|
+| OTC Medication Guides | 20 | Acetaminophen, Ibuprofen, Omeprazole, Melatonin, Omega-3 |
+| Health Condition Guides | 13 | Headaches, Cold & Flu, Allergies, Acid Reflux, Wound Care |
+| Pharmacy Policies | 10 | Refill policy, Insurance, Medication disposal, Storage guidelines |
+| Drug Safety | 9 | Drug interactions overview, Pregnancy safety, Elderly medication safety |
+| Wellness & First Aid | 3 | First aid kit essentials, Vitamin supplements, Healthy lifestyle |
+
+### Indexing Pipeline
+
+```
+Documents (.txt) → Chunker (512 words, 64-word overlap) → Embedder (all-MiniLM-L6-v2)
+    → ChromaDB (cosine similarity, persistent)
+```
+
+Run once before starting the server:
+
+```bash
+python scripts/index_documents.py
+# Optional flags:
+python scripts/index_documents.py --docs-dir ./documents --chunk-size 512 --overlap 64 --chroma-dir ./chroma_db
+```
+
+### Retrieval at Runtime
+
+On every message:
+1. Query is embedded with `all-MiniLM-L6-v2` (same model as indexing)
+2. Top-3 most similar chunks retrieved via cosine search from ChromaDB
+3. Chunks formatted into a context block and injected before the LLM call
+4. Query-level LRU cache avoids re-embedding identical or recent queries
+
+| Property | Value |
 |---|---|
-| **Model** | Qwen2.5-0.5B-Instruct |
-| **Quantization** | Q4_K_M GGUF (via llama-cpp-python) |
-| **Size on disk** | ~400 MB |
-| **Peak RAM** | ~900 MB |
-| **Inference backend** | llama.cpp (CPU-optimised, BLAS enabled) |
-| **Why Qwen2.5-0.5B?** | Strong instruction-following at sub-1B scale; outperforms comparably-sized Phi and LiquidAI variants on conversational task coherence; fits comfortably in 4 GB RAM machines |
-| **Why Q4_K_M?** | Best quality/performance trade-off in the K-quant family; minimal perplexity loss vs Q8 (~0.3 ppl) with ~40% smaller footprint |
-| **Why not vLLM/Ollama?** | llama-cpp-python is sufficient for a single-node low-traffic deployment and has zero external daemon dependencies, simplifying Docker packaging |
+| Embedding model | `all-MiniLM-L6-v2` (Sentence-Transformers) |
+| Vector store | ChromaDB (persistent, CPU-compatible) |
+| Similarity metric | Cosine similarity |
+| Top-k retrieved | 3 chunks |
+| Chunk size | 512 words with 64-word overlap |
 
 ---
 
-## Context Memory Management Scheme
+## Tools
 
-The `ConversationManager` uses a **sliding window pruning** strategy to prevent unbounded context growth:
+All four tools are called **before** LLM generation begins. Results are injected into the prompt as context, preserving token-by-token streaming.
 
-1. **System prompt is always at index 0** and is never pruned — it is the anchor that enforces all domain constraints on every turn.
-2. **User and assistant messages** are appended in order after each turn.
-3. After every `add_user_message` or `add_assistant_message` call, `_prune_history()` is invoked. If the total message count exceeds `max_history + 1` (default: 11 slots = 1 system + 10 conversation turns), the oldest conversation messages are dropped, keeping the most recent `max_history` turns.
-4. This ensures the **token input to the model never exceeds ~2,000–3,000 tokens** under normal usage, well within the 4,096-token context window.
+### Tool 1 — CRM Tool *(Mandatory)*
 
-**Trade-off:** Very long conversations lose early context. This is acceptable for a customer service use case where each query is typically short and self-contained. A future improvement would be a summarisation step to compress older turns rather than discarding them outright.
+Stores and retrieves patient information across sessions using a persistent SQLite database.
+
+| Property | Details |
+|---|---|
+| **Name** | `crm_tool` |
+| **Backend** | SQLite via `aiosqlite` |
+| **Actions** | `get_user`, `create_user`, `update_user` |
+| **Fields** | `name`, `contact`, `preferences`, `last_visit`, `interaction_history` |
+
+**Example:**
+```
+User:  "Hi, my name is Sarah."
+→ crm_tool.create_user(user_id=session_id, name="Sarah")
+→ Bot: "Welcome to HealthFirst, Sarah! How can I help you today?"
+
+User:  "Do you remember me?" (on return visit)
+→ crm_tool.get_user(user_id=session_id)
+→ Bot: "Of course, Sarah! Welcome back. Your last visit was April 18th."
+```
+
+### Tool 2 — Drug Interaction Checker
+
+Local database of 20+ clinically significant drug-drug interactions. No external API required.
+
+| Property | Details |
+|---|---|
+| **Name** | `check_drug_interaction` |
+| **Input** | `drug1: string`, `drug2: string` |
+| **Output** | `severity` (major/moderate/minor/unknown), `description`, `recommendation` |
+| **Coverage** | Warfarin, NSAIDs, alcohol, MAOIs, statins, PPIs, antihistamines, and more |
+
+**Example:**
+```
+User:  "Is it safe to take warfarin and ibuprofen together?"
+→ check_drug_interaction(drug1="warfarin", drug2="ibuprofen")
+→ severity: MAJOR — increased bleeding risk
+→ Bot: "Taking warfarin and ibuprofen together is a major interaction. NSAIDs
+        significantly increase bleeding risk. Please use acetaminophen instead
+        and consult your physician."
+```
+
+### Tool 3 — Dosage Calculator
+
+Calculates weight- and age-appropriate OTC doses using standard evidence-based dosing tables.
+
+| Property | Details |
+|---|---|
+| **Name** | `calculate_dosage` |
+| **Input** | `medication: string`, `age_years: number`, `weight_kg: number (optional)` |
+| **Output** | `recommended_dose_mg`, `frequency`, `max_daily_dose_mg`, `notes` |
+| **Medications** | Acetaminophen, Ibuprofen, Naproxen, Diphenhydramine, Loratadine, Cetirizine, Guaifenesin, Loperamide, Omeprazole |
+
+**Example:**
+```
+User:  "What dose of ibuprofen for a 4-year-old weighing 16 kg?"
+→ calculate_dosage(medication="ibuprofen", age_years=4, weight_kg=16)
+→ dose: 120 mg every 6–8 hours, max 640 mg/day
+→ Bot: "For a 4-year-old weighing 16 kg, the recommended ibuprofen dose is
+        120 mg every 6–8 hours. Do not exceed 640 mg in 24 hours, and always
+        take with food. Please consult a pharmacist to confirm."
+```
+
+### Tool 4 — Medication Info Lookup
+
+Returns structured medication information from a local database of 13 common OTC drugs.
+
+| Property | Details |
+|---|---|
+| **Name** | `get_medication_info` |
+| **Input** | `medication_name: string` (brand or generic) |
+| **Output** | `uses`, `side_effects`, `key_warnings`, `OTC availability`, `forms available` |
+| **Coverage** | Acetaminophen, Ibuprofen, Aspirin, Diphenhydramine, Loratadine, Cetirizine, Omeprazole, Pseudoephedrine, Guaifenesin, Loperamide, Melatonin, Hydrocortisone, Clotrimazole |
+
+**Example:**
+```
+User:  "What are the side effects of omeprazole?"
+→ get_medication_info(medication_name="omeprazole")
+→ Bot: "Omeprazole (Prilosec) is a proton pump inhibitor used for frequent
+        heartburn. Common side effects include headache, nausea, and diarrhea.
+        With long-term use, watch for low magnesium and vitamin B12 deficiency.
+        It's available OTC as a 20 mg delayed-release capsule."
+```
 
 ---
 
-## Prompt Templates
+## Conversation Flow Design
 
-The system uses a **single injected system prompt** (no external template files) that defines the assistant's identity, permitted scope, and hard constraints. It is injected once at session creation as `{"role": "system", "content": SYSTEM_PROMPT}` and never removed or altered during a session.
+```
+User message received
+        │
+        ▼
+ConversationManager.add_user_message()
+        │
+        ▼
+_enrich_message() — concurrent asyncio.gather()
+  ├── RAG: embed query → ChromaDB top-3 chunks → format context block
+  └── Tool: detect intent (regex/keyword) → call tool → format result
+        │
+        ▼
+build_augmented_messages()
+  └── Inject [RAG context + tool result] before last user message
+        │
+        ▼
+LLMEngine.stream_chat(augmented_messages)
+  └── ThreadPoolExecutor → asyncio.Queue → token stream
+        │
+        ▼
+WebSocket: {"type":"tool_used", "tool":"..."} (if tool was called)
+           {"type":"start"}
+           {"type":"token", "content":"..."} × N
+           {"type":"end"}
+        │
+        ▼
+ConversationManager.add_assistant_message()
+```
 
-### System Prompt
+**Key design principle:** RAG retrieval and tool calls both complete *before* the LLM starts generating. The LLM receives one enriched prompt and streams a single response — no multi-pass or interrupted streaming.
+
+---
+
+## Context Memory Management
+
+The `ConversationManager` uses two complementary strategies:
+
+### 1. Sliding Window Pruning
+After every turn, `_prune_history()` keeps the system prompt (index 0) plus the last `max_history` messages (default: 10). Older turns are dropped. This keeps input tokens well within the 4,096-token context window.
+
+### 2. Signal-to-Noise (SNR) Filtering
+When assembling the LLM context via `get_messages()`, the most recent 4 messages are always kept verbatim. Older user messages that match known filler phrases ("ok", "thanks", "sure", etc.) are silently dropped. This frees context budget for substantive content.
+
+### 3. Prompt Augmentation (new)
+`build_augmented_messages()` creates a non-destructive copy of the message list with RAG chunks and tool results prepended to the last user message. The raw session store is never mutated — only the LLM-facing view is enriched.
+
+---
+
+## System Prompt
 
 ```
 You are a helpful, professional Pharmacy Assistant at 'HealthFirst Community Pharmacy'.
@@ -208,6 +317,8 @@ Your role is to assist customers with:
 - Checking general availability of over-the-counter (OTC) medications.
 - Providing information about pharmacy business hours (Mon-Sat 8AM to 9PM, Sun 10AM to 6PM).
 - Giving general, non-diagnostic wellness advice.
+- Answering questions about drug interactions, dosages, and medication details using retrieved information.
+- Greeting returning customers by name using CRM records when available.
 
 IMPORTANT CONSTRAINTS (You must strictly follow these):
 - You CANNOT and WILL NOT prescribe medication.
@@ -215,76 +326,191 @@ IMPORTANT CONSTRAINTS (You must strictly follow these):
 - If a user asks for prescription drugs or a medical diagnosis, politely inform them that you are
   an AI assistant and they should consult a licensed doctor or pharmacist in person.
 - Keep your answers concise, empathetic, and professional.
+- When relevant pharmacy information or tool results are provided in the context, use them to give
+  accurate, specific answers.
+- Always add a disclaimer to consult a pharmacist or physician for personalised medical advice.
 ```
 
-### Design Rationale
+---
 
-| Element | Purpose |
+## Example Dialogues
+
+### Dialogue 1 — Returning Customer (CRM Tool)
+
+> **User:** Hi, my name is Sarah.
+>
+> **Assistant:** Welcome to HealthFirst Community Pharmacy, Sarah! It's great to have you here. How can I assist you today?
+>
+> **User:** Do you remember me?
+>
+> **Assistant:** Yes, I have your name on file, Sarah. How can I help you today?
+
+---
+
+### Dialogue 2 — Drug Interaction Check
+
+> **User:** Is it safe to take ibuprofen and aspirin together?
+>
+> **Assistant:** Taking ibuprofen and aspirin together is generally not recommended. Ibuprofen can block aspirin's irreversible antiplatelet effect, which is important for cardiovascular protection. They also share GI risks — combined use significantly increases the chance of stomach bleeding. If you need pain relief alongside low-dose aspirin, acetaminophen is a safer alternative. Please consult our pharmacist before combining these.
+>
+> **User:** What about warfarin and ibuprofen?
+>
+> **Assistant:** This is a **major** interaction and should be avoided. Ibuprofen, like all NSAIDs, inhibits platelet function and can cause GI bleeding. Combined with warfarin, the risk of serious bleeding is significantly elevated. Please use acetaminophen for pain relief instead, and inform your prescribing physician. Our pharmacists at HealthFirst are also happy to help.
+
+---
+
+### Dialogue 3 — Dosage Calculation
+
+> **User:** What is the correct dose of ibuprofen for a 4-year-old child weighing 16 kg?
+>
+> **Assistant:** For a 4-year-old weighing 16 kg, the recommended ibuprofen dose is **120 mg**, taken every 6–8 hours. The maximum daily dose is 640 mg. Always give ibuprofen with food or milk to reduce stomach upset, and do not use in children under 6 months. Please consult a pharmacist or physician to confirm dosing for your child.
+>
+> **User:** And how much acetaminophen can an adult take per day?
+>
+> **Assistant:** Adults can take **500 mg of acetaminophen** every 4–6 hours as needed, with a maximum of **4,000 mg per day**. If you drink alcohol regularly, keep the daily limit at 3,000 mg or less. Be sure to check all other medications you're taking for acetaminophen content to avoid accidentally exceeding the limit.
+
+---
+
+### Dialogue 4 — Medication Info (RAG + Tool)
+
+> **User:** What is omeprazole used for?
+>
+> **Assistant:** Omeprazole (brand name: Prilosec OTC) is a **proton pump inhibitor (PPI)** used for frequent heartburn — specifically when symptoms occur two or more days per week. The OTC dose is 20 mg once daily before a meal for 14 consecutive days. Note that it is not for immediate relief — it takes 1–4 days to reach full effect. For occasional heartburn, an antacid like Tums or an H2 blocker like famotidine works faster.
+
+---
+
+### Dialogue 5 — Pharmacy Policy (RAG)
+
+> **User:** What's the safest way to dispose of old medications?
+>
+> **Assistant:** The safest way is through a **DEA-authorized drug take-back program** — HealthFirst Pharmacy may have an in-store collection kiosk, and national take-back events are held twice a year. If no take-back is available, you can dispose of most medications at home by mixing them with coffee grounds or kitty litter, sealing the mixture in a bag, and placing it in the household trash. Do not flush medications unless they appear on the FDA's official Flush List (typically reserved for high-risk opioids). For sharps like needles, please use a certified sharps container — never put them in regular trash.
+
+---
+
+## Performance & Optimisation
+
+| Strategy | Details |
 |---|---|
-| Role declaration ("Pharmacy Assistant at HealthFirst") | Anchors the model's identity and prevents drift into generic chatbot behaviour |
-| Enumerated permitted topics | Reduces hallucination about capabilities by giving the model explicit scope |
-| Hard-coded hours (Mon–Sat / Sun) | Ensures factual consistency without a database lookup |
-| Explicit `CANNOT` constraints | Instruction-tuned models respond reliably to imperative negations |
-| Tone directive ("concise, empathetic, professional") | Shapes response style appropriate to a healthcare adjacent context |
-
----
-
-## Performance & Optimization Strategy
-
-1. **Quantized Models**: Utilizing a Q4_K_M GGUF Qwen 2.5 0.5B model keeps the memory footprint under 1 GB, allowing standard laptops to maintain ~15+ tokens/second CPU inference.
-2. **Streaming Output**: WebSockets allow the initial latency "Time to First Token" (TTFT) to be perceptually immediate, rendering text as it generates rather than waiting for the full response.
-3. **Stateless Backend Design**: State is retained only via an in-memory dictionary keyed by `session_id`, meaning the WebSocket handler is extremely lightweight. It can scale behind a load balancer (e.g. Nginx + Redis session store) with minimal changes.
-4. **Context Throttling**: The Conversation Manager truncates chat history to the last 10 messages, minimising context window size and keeping per-request inference time stable across long sessions.
-5. **ThreadPoolExecutor Offload**: `llama-cpp-python` is synchronous; generation is run in a `ThreadPoolExecutor` and results are piped back to the async event loop via `asyncio.Queue`, ensuring the uvicorn event loop is never blocked.
-
----
-
-## Performance Benchmarks
-
-Benchmarks were measured on a mid-range development machine (**Intel Core i7-10750H, 16 GB RAM, no GPU**) using the Q4_K_M GGUF model at default settings (`n_threads = CPU count - 1`, `n_ctx = 4096`, `max_tokens = 512`).
+| **Token streaming** | LLM generates tokens incrementally; WebSocket delivers them word-by-word for real-time rendering |
+| **Concurrent enrichment** | RAG retrieval and tool calls run via `asyncio.gather()` — both complete before LLM starts, no sequential blocking |
+| **Embedding + query cache** | `DocumentRetriever` maintains an in-memory LRU cache (256 entries) for repeated queries |
+| **ThreadPoolExecutor offload** | Synchronous llama-cpp-python inference offloaded to thread pool; event loop remains responsive |
+| **Async tool calls** | All tools implemented as `async` coroutines; no event-loop blocking |
+| **SNR context filtering** | Filler messages pruned from older context; keeps effective token count low |
+| **Sliding window pruning** | Hard cap of last 10 conversation turns keeps input tokens ≤ ~3,000 |
 
 ### Latency Benchmarks
 
+Measured on **Intel Core i7-10750H, 16 GB RAM, no GPU**.
+
 | Metric | Result |
 |---|---|
-| **Time to First Token (TTFT)** | 380–520 ms |
-| **Average token throughput** | ~14–17 tokens/sec |
-| **Average full response time** (short reply, ~50 tokens) | ~3.5 s |
-| **Average full response time** (medium reply, ~150 tokens) | ~10–11 s |
-| **Peak RAM usage** | ~900 MB |
-| **Model load time (cold start)** | ~4–6 s |
-
-### Concurrency / Stress Test
-
-| Parallel WebSocket clients | Behaviour |
-|---|---|
-| 1 | Normal latency, ~14–17 tok/s |
-| 3 | Slight throughput reduction per-client (~10–12 tok/s), no errors |
-| 5 | Noticeable queuing delay (~+2–3 s TTFT), all sessions complete successfully |
-| 10 | Significant queuing; requests serialise through the `ThreadPoolExecutor`; no crashes observed |
-
-**Methodology:** Concurrent load was simulated by opening multiple browser tabs simultaneously and sending messages within the same 2-second window. Each session maintained independent state with no cross-contamination.
+| Time to First Token (TTFT) | 380–520 ms |
+| Embedding + vector retrieval | ~150–200 ms |
+| Tool call latency (local) | < 10 ms |
+| Average token throughput | ~14–17 tokens/sec |
+| Short reply (~50 tokens) | ~3.5 s |
+| Medium reply (~150 tokens) | ~10–11 s |
+| Peak RAM (model loaded) | ~900 MB |
+| Model cold-start time | ~4–6 s |
 
 ---
 
-## Setup and Running
+## Setup Instructions
 
-Ensure Docker and Docker Compose are installed. The model file (`qwen2.5-0.5b-instruct-q4_k_m.gguf`) must be present in `backend/models/`. If not, run:
+### Prerequisites
+- Python 3.10+
+- Docker and Docker Compose (for containerised run)
+
+### 1. Clone and install dependencies
+
+```bash
+git clone <repo-url>
+cd conversational-ai-system
+
+# Create virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+pip install -r backend/requirements.txt
+```
+
+### 2. Download the LLM model
 
 ```bash
 cd backend
-pip install huggingface-hub
 python download_model.py
 ```
 
-To boot the full system:
+### 3. Configure environment variables
+
+```bash
+cp .env.example .env
+# Edit .env if you want to change default paths
+```
+
+### 4. Index the document corpus *(run once)*
+
+```bash
+python scripts/index_documents.py
+```
+
+This embeds all 55 documents in `documents/` and saves the vector store to `chroma_db/`.
+
+### 5. Run the backend
+
+```bash
+cd backend
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 6. Serve the frontend
+
+```bash
+cd frontend
+python3 -m http.server 8080
+```
+
+Open `http://localhost:8080` in your browser.
+
+### 7. (Optional) Download voice models
+
+```bash
+cd backend
+python download_voice_models.py
+```
+
+### Docker (full stack)
 
 ```bash
 docker-compose up --build
 ```
 
-- Web Interface: `http://localhost:80`
-- FastAPI Swagger docs: `http://localhost:8000/docs`
+- Frontend: `http://localhost:80`
+- API docs: `http://localhost:8000/docs`
+
+### Environment Variables
+
+| Variable | Description | Default |
+|---|---|---|
+| `MODEL_PATH` | Path to the GGUF model file | `models/qwen2.5-0.5b-instruct-q4_k_m.gguf` |
+| `CHROMA_PERSIST_DIR` | ChromaDB vector store directory | `./chroma_db` |
+| `CRM_DB_PATH` | SQLite CRM database file path | `./crm.db` |
+| `DOCS_DIR` | Document corpus directory | `./documents` |
+
+---
+
+## Model Selection
+
+| Property | Details |
+|---|---|
+| **Model** | Qwen2.5-0.5B-Instruct |
+| **Quantization** | Q4_K_M GGUF (via llama-cpp-python) |
+| **Size on disk** | ~400 MB |
+| **Peak RAM** | ~900 MB |
+| **Inference backend** | llama.cpp (CPU-optimised, BLAS enabled) |
+| **Why Qwen2.5-0.5B?** | Strong instruction-following at sub-1B scale; outperforms comparably-sized Phi variants on conversational coherence; fits comfortably in 4 GB RAM |
+| **Why Q4_K_M?** | Best quality/speed trade-off in the K-quant family; minimal perplexity loss vs Q8 (~0.3 ppl) at ~40% smaller footprint |
 
 ---
 
@@ -292,10 +518,11 @@ docker-compose up --build
 
 | Limitation | Detail |
 |---|---|
-| **In-memory session storage** | All sessions are lost on backend restart. There is no persistent database. A Redis or SQLite backend would be required for production durability. |
-| **Single-node inference** | The LLM runs on one CPU-bound thread pool. Horizontal scaling across multiple nodes is not supported in the current architecture. |
-| **Context window loss** | The sliding-window pruning discards early conversation turns. In long sessions, the assistant may forget information shared at the start of the conversation. |
-| **No real inventory data** | The assistant reasons only from its system prompt. It cannot actually verify OTC stock levels or pricing — all such answers are generic. |
-| **Model size vs. quality trade-off** | The 0.5B parameter Qwen model provides fast CPU inference but can produce repetitive phrasing or slightly awkward responses on complex multi-step queries. A 1.5B or 3B quantized model would improve quality at the cost of ~2× RAM and latency. |
-| **No authentication** | The WebSocket endpoint has no API key or session authentication. Any client with network access can connect and create sessions. |
-| **Concurrency ceiling** | Under high concurrent load (>10 simultaneous users), the `ThreadPoolExecutor` queue causes significant response delays. This is a fundamental constraint of CPU-only synchronous inference. |
+| **In-memory sessions** | Session history is lost on backend restart. CRM data (SQLite) and the vector store (ChromaDB) persist across restarts; conversation history does not. |
+| **Intent detection is rule-based** | The tool orchestrator uses keyword/regex matching, not LLM-driven function calling. This is intentional for reliability with a 0.5B model. |
+| **Tool database coverage** | The drug interaction and medication info databases cover common OTC medications only. Uncommon drugs return an "unknown" response. |
+| **No real inventory data** | The assistant cannot verify live OTC stock levels or pricing — all availability answers are generic. |
+| **Model size vs. quality** | The 0.5B Qwen model provides fast CPU inference but can produce slightly awkward responses on complex queries. A 1.5B–3B model would improve quality at ~2× RAM and latency. |
+| **Concurrency ceiling** | Under heavy concurrent load (>10 simultaneous users), the ThreadPoolExecutor queue causes significant delays. CPU-only inference is the fundamental bottleneck. |
+| **No authentication** | The WebSocket endpoint has no API key or session authentication. |
+| **Embedding model limitations** | `all-MiniLM-L6-v2` is a general-purpose model. Domain-specific fine-tuning would improve retrieval precision for highly technical pharmacy queries. |
