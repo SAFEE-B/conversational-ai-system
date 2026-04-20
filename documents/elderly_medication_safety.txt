@@ -1,0 +1,40 @@
+Medication Safety in Older Adults
+HealthFirst Community Pharmacy
+
+WHY OLDER ADULTS NEED SPECIAL ATTENTION:
+Aging changes how the body processes medications:
+- Reduced kidney function: slower elimination of renally-cleared drugs → drug accumulation
+- Reduced liver function: slower metabolism of hepatically-cleared drugs
+- Decreased body water: higher concentration of water-soluble drugs
+- Increased body fat: longer half-life for fat-soluble drugs
+- Polypharmacy: increased drug interaction risk with multiple medications
+
+THE BEERS CRITERIA:
+The American Geriatrics Society's Beers Criteria lists medications that are potentially inappropriate for adults aged 65+. Key categories:
+
+Sedatives/Hypnotics:
+- Benzodiazepines (diazepam, alprazolam, lorazepam): increased fall and fracture risk, cognitive impairment
+- Diphenhydramine-based sleep aids: strong anticholinergic effects, delirium, falls
+
+Anticholinergic Medications:
+- Diphenhydramine, oxybutynin, some antidepressants: confusion, constipation, urinary retention, blurred vision
+
+NSAIDs:
+- Ibuprofen, naproxen, aspirin at high doses: increased GI bleeding, kidney injury, fluid retention
+
+Muscle Relaxants:
+- Cyclobenzaprine, carisoprodol: sedation, anticholinergic effects, falls
+
+SAFER ALTERNATIVES FOR COMMON CONDITIONS IN ELDERLY:
+- Pain: Acetaminophen preferred over NSAIDs; topical diclofenac gel for localized pain
+- Sleep: Melatonin (0.5–3 mg) preferred over antihistamines or benzodiazepines
+- Allergies: Loratadine or fexofenadine (non-sedating) preferred over diphenhydramine
+
+POLYPHARMACY MANAGEMENT:
+- Keep an updated medication list (include OTC, vitamins, herbal supplements)
+- Bring all medications to every doctor's appointment (brown bag review)
+- Ask about medication reconciliation at HealthFirst — our pharmacists can perform comprehensive medication reviews
+
+Fall Prevention:
+- Medications causing dizziness or sedation increase fall risk
+- Review all medications annually with your pharmacist for age-appropriateness

@@ -1,0 +1,37 @@
+Drug Interactions – What Every Patient Should Know
+HealthFirst Community Pharmacy
+
+WHAT IS A DRUG INTERACTION?
+A drug interaction occurs when the effect of one medication is altered by another substance — this can be another drug, food, herbal supplement, or even alcohol.
+
+TYPES OF DRUG INTERACTIONS:
+
+Drug–Drug Interactions:
+- Pharmacodynamic: Two drugs with similar effects act together (additive or antagonistic)
+  Example: Two blood pressure medications causing excessive drop in BP
+- Pharmacokinetic: One drug alters how another is absorbed, distributed, metabolized, or eliminated
+  Example: Clarithromycin inhibiting the metabolism of simvastatin → increased statin levels → muscle toxicity risk
+
+Drug–Food Interactions:
+- Grapefruit juice: Inhibits CYP3A4 enzyme → increases blood levels of statins, calcium channel blockers, some antihistamines
+- Vitamin K foods (leafy greens): Reduce the effect of warfarin (blood thinner)
+- Dairy/calcium: Can reduce absorption of certain antibiotics (tetracyclines, fluoroquinolones)
+
+Drug–Supplement Interactions:
+- St. John's Wort: Induces CYP enzymes → reduces effectiveness of oral contraceptives, HIV medications, anticoagulants
+- Ginkgo, ginseng, garlic, fish oil: May increase bleeding risk with anticoagulants
+- Melatonin: May interact with blood thinners and diabetes medications
+
+Drug–Alcohol Interactions:
+- Enhanced sedation with CNS depressants (benzodiazepines, opioids, antihistamines, sleep aids)
+- Increased bleeding risk with aspirin/NSAIDs
+- Disulfiram-like reaction with metronidazole (severe nausea/vomiting)
+- Acetaminophen + alcohol → increased liver toxicity risk
+
+REDUCING INTERACTION RISK:
+- Tell your pharmacist ALL medications you take (prescription, OTC, vitamins, supplements)
+- Use one pharmacy for all medications (interaction checking advantage)
+- Read medication guides and warning labels
+- Ask your pharmacist before starting a new supplement or OTC medication
+
+HealthFirst pharmacists perform drug interaction checks on every prescription.

@@ -1,0 +1,39 @@
+Food and Drug Interactions – Patient Guide
+HealthFirst Community Pharmacy
+
+FOOD CAN SIGNIFICANTLY AFFECT HOW MEDICATIONS WORK. Here are the most important interactions:
+
+GRAPEFRUIT AND GRAPEFRUIT JUICE:
+- Mechanism: Contains furanocoumarins that inhibit the CYP3A4 enzyme in the gut
+- Effect: Increases blood levels of affected medications → increased side effects or toxicity
+- Affected drugs (many — confirm with pharmacist):
+  - Statins: Simvastatin, lovastatin (avoid grapefruit); atorvastatin (less affected)
+  - Calcium channel blockers: Amlodipine, felodipine, nifedipine
+  - Immunosuppressants: Cyclosporine, tacrolimus
+  - Some antihistamines: Fexofenadine (grapefruit can REDUCE its effect)
+  - Psychiatric: Some benzodiazepines, buspirone
+  - Duration: ONE glass can affect metabolism for 24–72 hours
+
+VITAMIN K AND WARFARIN:
+- Warfarin is a blood thinner that works by blocking Vitamin K
+- Sudden large increases in Vitamin K foods can DECREASE warfarin's effect (increase clotting)
+- Sudden decreases can INCREASE warfarin's effect (increased bleeding risk)
+- Key: Be CONSISTENT with Vitamin K intake (don't dramatically change diet)
+- High Vitamin K foods: kale, spinach, collard greens, broccoli, Brussels sprouts, green onions
+
+DAIRY AND ANTIBIOTICS:
+- Tetracyclines (doxycycline, tetracycline): Calcium binds to the drug, reducing absorption significantly — take 2 hours before or after dairy
+- Fluoroquinolones (ciprofloxacin, levofloxacin): Similar calcium interaction — avoid dairy/calcium within 2 hours
+
+HIGH-FAT MEALS:
+- Some medications require food for proper absorption: itraconazole, isotretinoin, certain HIV medications
+- Other medications are best taken on an empty stomach for faster absorption
+
+TYRAMINE-RICH FOODS AND MAOIs:
+- Patients on MAO inhibitors must avoid tyramine-rich foods: aged cheeses, cured meats, fermented products, red wine
+- Can cause a dangerous hypertensive crisis
+
+LICORICE:
+- Natural licorice (glycyrrhizin) can raise blood pressure and reduce potassium levels, counteracting antihypertensive and diuretic medications
+
+Always check with your HealthFirst pharmacist about food interactions with your specific medications.
