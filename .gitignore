@@ -43,3 +43,7 @@ desktop.ini
 
 # Hugging Face cache
 .cache/
+
+# Generated artifacts (recreated by index_documents.py / runtime)
+chroma_db/
+crm.db
