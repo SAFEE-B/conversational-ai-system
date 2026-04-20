@@ -39,8 +39,6 @@ class ASREngine:
                 "1",
                 "-ar",
                 str(self.sample_rate),
-                "-af",
-                "highpass=f=200,lowpass=f=3000,afftdn",
                 "-f",
                 "s16le",
                 pcm_path,

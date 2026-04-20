@@ -21,7 +21,8 @@ hf_hub_download(
 fi
 
 # ─── Voice models (ASR + TTS) ───────────────────────────────────────────────
-VOSK_MODEL_DIR="$MODEL_DIR/vosk-model-en-us-0.22-lgraph"
+# Set the model directory to the newly configured Daanzu mid-size model
+export VOSK_MODEL_DIR="models/vosk-model-en-us-daanzu-20200905"
 PIPER_ONNX="$MODEL_DIR/piper-voices/en/en_US/ryan/low/en_US-ryan-low.onnx"
 PIPER_JSON="$MODEL_DIR/piper-voices/en/en_US/ryan/low/en_US-ryan-low.onnx.json"
 

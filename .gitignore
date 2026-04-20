@@ -17,9 +17,11 @@ env/
 # Model files (large binary - never commit!)
 backend/models/*.gguf
 backend/models/*.bin
+backend/models/*.onnx
 backend/models/.huggingface/
 backend/models/.cache_vosk/
 backend/models/piper-voices/
+backend/models/vosk-model-*/
 
 # Docker
 .dockerignore

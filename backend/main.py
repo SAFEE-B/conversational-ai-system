@@ -37,7 +37,7 @@ async def lifespan(app: FastAPI):
 
     # Voice engines: local ASR + local TTS (CPU pipeline).
     try:
-        asr_engine = ASREngine(model_dir="models/vosk-model-en-us-0.22-lgraph")
+        asr_engine = ASREngine(model_dir="models/vosk-model-en-us-daanzu-20200905")
         logger.info("ASR Engine initialized successfully.")
     except Exception as e:
         logger.error(f"Failed to initialize ASR Engine: {e}")

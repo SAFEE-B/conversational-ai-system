@@ -1,103 +1,57 @@
+"""Download Vosk ASR and Piper TTS models into the models/ directory."""
+
 import os
-import shutil
+import urllib.request
 import zipfile
 
-from huggingface_hub import hf_hub_download
+MODELS_DIR = "models"
+
+VOSK_MODEL_NAME = "vosk-model-en-us-daanzu-20200905"
+VOSK_MODEL_DIR = os.path.join(MODELS_DIR, VOSK_MODEL_NAME)
+VOSK_ZIP_URL = (
+    "https://alphacephei.com/vosk/models/vosk-model-en-us-daanzu-20200905.zip"
+)
+
+PIPER_VOICE_DIR = os.path.join(MODELS_DIR, "piper-voices", "en", "en_US", "ryan", "low")
+PIPER_ONNX = os.path.join(PIPER_VOICE_DIR, "en_US-ryan-low.onnx")
+PIPER_JSON = os.path.join(PIPER_VOICE_DIR, "en_US-ryan-low.onnx.json")
+PIPER_ONNX_URL = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/low/en_US-ryan-low.onnx"
+PIPER_JSON_URL = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/low/en_US-ryan-low.onnx.json"
 
 
-VOSK_REPO_ID = "rhasspy/vosk-models"
-VOSK_ZIP_FILENAME = "en/vosk-model-en-us-0.22-lgraph.zip"
-VOSK_TARGET_DIR = os.path.join("models", "vosk-model-en-us-0.22-lgraph")
-
-PIPER_REPO_ID = "rhasspy/piper-voices"
-PIPER_ONNX_FILENAME = "en/en_US/ryan/low/en_US-ryan-low.onnx"
-PIPER_JSON_FILENAME = "en/en_US/ryan/low/en_US-ryan-low.onnx.json"
-PIPER_TARGET_DIR = os.path.join("models", "piper-voices")
+def _download(url: str, dest: str) -> None:
+    print(f"  Downloading {url} -> {dest}")
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    urllib.request.urlretrieve(url, dest)
 
 
-def ensure_vosk_model():
-    if os.path.exists(os.path.join(VOSK_TARGET_DIR, "conf")):
+def download_vosk() -> None:
+    if os.path.isdir(os.path.join(VOSK_MODEL_DIR, "conf")):
+        print(f"Vosk model already present at {VOSK_MODEL_DIR}, skipping.")
         return
 
-    os.makedirs(VOSK_TARGET_DIR, exist_ok=True)
-
-    cache_dir = os.path.join("models", ".cache_vosk")
-    os.makedirs(cache_dir, exist_ok=True)
-
-    zip_path = hf_hub_download(
-        repo_id=VOSK_REPO_ID,
-        filename=VOSK_ZIP_FILENAME,
-        local_dir=cache_dir,
-        local_dir_use_symlinks=False,
-    )
-
-    # Extract into a temporary directory first.
-    tmp_extract_dir = os.path.join(cache_dir, "_extracted")
-    if os.path.exists(tmp_extract_dir):
-        shutil.rmtree(tmp_extract_dir)
-    os.makedirs(tmp_extract_dir, exist_ok=True)
-
+    zip_path = VOSK_MODEL_DIR + ".zip"
+    _download(VOSK_ZIP_URL, zip_path)
+    print(f"  Extracting {zip_path} -> {MODELS_DIR}")
     with zipfile.ZipFile(zip_path, "r") as zf:
-        zf.extractall(tmp_extract_dir)
-
-    # The zip normally contains a single top-level folder.
-    candidates = [d for d in os.listdir(tmp_extract_dir) if os.path.isdir(os.path.join(tmp_extract_dir, d))]
-    if not candidates:
-        raise RuntimeError("Could not locate extracted Vosk model directory in the zip.")
-
-    extracted_model_dir = os.path.join(tmp_extract_dir, candidates[0])
-
-    # Replace target dir contents.
-    if os.path.exists(VOSK_TARGET_DIR):
-        # Keep the dir itself, replace contents.
-        for name in os.listdir(VOSK_TARGET_DIR):
-            path = os.path.join(VOSK_TARGET_DIR, name)
-            if os.path.isdir(path):
-                shutil.rmtree(path)
-            else:
-                os.remove(path)
-
-    for name in os.listdir(extracted_model_dir):
-        src = os.path.join(extracted_model_dir, name)
-        dst = os.path.join(VOSK_TARGET_DIR, name)
-        if os.path.isdir(src):
-            shutil.copytree(src, dst, dirs_exist_ok=True)
-        else:
-            shutil.copy2(src, dst)
+        zf.extractall(MODELS_DIR)
+    os.remove(zip_path)
+    print("Vosk model ready.")
 
 
-def ensure_piper_model():
-    onnx_path = os.path.join(PIPER_TARGET_DIR, "en", "en_US", "ryan", "low", "en_US-ryan-low.onnx")
-    json_path = os.path.join(PIPER_TARGET_DIR, "en", "en_US", "ryan", "low", "en_US-ryan-low.onnx.json")
-
-    if os.path.exists(onnx_path) and os.path.exists(json_path):
+def download_piper() -> None:
+    if os.path.isfile(PIPER_ONNX) and os.path.isfile(PIPER_JSON):
+        print("Piper voice already present, skipping.")
         return
 
-    os.makedirs(PIPER_TARGET_DIR, exist_ok=True)
-
-    hf_hub_download(
-        repo_id=PIPER_REPO_ID,
-        filename=PIPER_ONNX_FILENAME,
-        local_dir=PIPER_TARGET_DIR,
-        local_dir_use_symlinks=False,
-    )
-    hf_hub_download(
-        repo_id=PIPER_REPO_ID,
-        filename=PIPER_JSON_FILENAME,
-        local_dir=PIPER_TARGET_DIR,
-        local_dir_use_symlinks=False,
-    )
-
-
-def main():
-    ensure_vosk_model()
-    ensure_piper_model()
-
-    print("Voice models ready.")
-    print("Vosk dir:", VOSK_TARGET_DIR)
-    print("Piper onnx:", os.path.join(PIPER_TARGET_DIR, "en", "en_US", "ryan", "low", "en_US-ryan-low.onnx"))
+    os.makedirs(PIPER_VOICE_DIR, exist_ok=True)
+    _download(PIPER_ONNX_URL, PIPER_ONNX)
+    _download(PIPER_JSON_URL, PIPER_JSON)
+    print("Piper voice ready.")
 
 
 if __name__ == "__main__":
-    main()
-
+    os.makedirs(MODELS_DIR, exist_ok=True)
+    download_vosk()
+    download_piper()
+    print("All voice models downloaded successfully.")

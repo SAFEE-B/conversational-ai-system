@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ensure audio chunks play in order.
     let audioChain = Promise.resolve();
     let audioGenerationId = 0;
+    let thinkingMsg = null;
 
     /* ─── Helpers ───────────────────────────────────────── */
     welcomeTime.textContent = formatTime();
@@ -46,6 +47,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function scrollToBottom() {
         chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function showThinkingIndicator(text = "Thinking...") {
+        hideThinkingIndicator();
+        thinkingMsg = createMessageElement('assistant', text);
+        thinkingMsg.classList.add('thinking-msg');
+        thinkingMsg.querySelector('.bubble').classList.add('streaming');
+        thinkingMsg.querySelector('.bubble').style.color = 'var(--text-muted)';
+        chatBox.appendChild(thinkingMsg);
+        scrollToBottom();
+    }
+
+    function hideThinkingIndicator() {
+        if (thinkingMsg && thinkingMsg.parentNode) {
+            thinkingMsg.parentNode.removeChild(thinkingMsg);
+        }
+        thinkingMsg = null;
     }
 
     function stopAudioPlayback() {
@@ -137,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateSendBtn();
 
                     ws.send(JSON.stringify({ type: 'voice_message', audio_base64: audioB64, input_ext: inputExt }));
+                    showThinkingIndicator("Processing audio...");
                 } catch {
                     isGenerating = false;
                     updateSendBtn();
@@ -308,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatTitle.textContent = 'HealthFirst Assistant';
         stopVoiceCapture();
         stopAudioPlayback();
+        hideThinkingIndicator();
         isGenerating = false;
         currentMsg = null;
         closeSidebar();
@@ -357,11 +377,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (data.type === 'voice_transcript') {
+                    hideThinkingIndicator();
                     // Render the ASR transcript as a user message bubble.
                     if (data.content) {
                         chatBox.appendChild(createMessageElement('user', data.content));
                         scrollToBottom();
                     }
+                    showThinkingIndicator("Thinking...");
                     return;
                 }
 
@@ -377,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (data.type === 'start') {
+                    hideThinkingIndicator();
                     isGenerating = true;
                     currentMsg = createMessageElement('assistant');
                     currentMsg.querySelector('.bubble').classList.add('streaming');
@@ -400,6 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateSendBtn();
                 }
                 else if (data.type === 'error') {
+                    hideThinkingIndicator();
                     isGenerating = false;
                     chatBox.appendChild(createMessageElement('error', data.content || 'An error occurred.'));
                     scrollToBottom();
@@ -462,6 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToBottom();
 
         ws.send(JSON.stringify({ type: 'message', content }));
+        showThinkingIndicator("Thinking...");
 
         // Persist session locally immediately (title will be updated after response)
         if (currentSession) saveLocalSession(currentSession, chatTitle.textContent);
@@ -482,6 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stopVoiceCapture();
         setVoiceButtonsRecording(false);
         stopAudioPlayback();
+        hideThinkingIndicator();
         isGenerating = false;
         currentMsg = null;
         updateSendBtn();
