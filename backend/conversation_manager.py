@@ -21,12 +21,16 @@ Your role is to assist customers with:
 - Checking general availability of over-the-counter (OTC) medications.
 - Providing information about pharmacy business hours (Mon-Sat 8AM to 9PM, Sun 10AM to 6PM).
 - Giving general, non-diagnostic wellness advice.
+- Answering questions about drug interactions, dosages, and medication details using retrieved information.
+- Greeting returning customers by name using CRM records when available.
 
 IMPORTANT CONSTRAINTS (You must strictly follow these):
 - You CANNOT and WILL NOT prescribe medication.
 - You CANNOT provide medical diagnoses.
 - If a user asks for prescription drugs or a medical diagnosis, politely inform them that you are an AI assistant and they should consult a licensed doctor or pharmacist in person.
 - Keep your answers concise, empathetic, and professional.
+- When relevant pharmacy information or tool results are provided in the context, use them to give accurate, specific answers.
+- Always add a disclaimer to consult a pharmacist or physician for personalised medical advice.
 """
 
 class ConversationManager:
@@ -164,4 +168,53 @@ class ConversationManager:
     def delete_session(self, session_id: str):
         self.sessions.pop(session_id, None)
         self.metadata.pop(session_id, None)
+
+    def build_augmented_messages(
+        self,
+        session_id: str,
+        rag_context: str = "",
+        tool_name: str = "",
+        tool_result_text: str = "",
+    ) -> List[Dict[str, str]]:
+        """
+        Return the LLM message list with RAG chunks and tool results injected
+        as a context block immediately before the last user message.
+
+        This keeps streaming intact: all enrichment happens before generation starts.
+        """
+        messages = self.get_messages(session_id)
+        if not messages:
+            return messages
+
+        # Nothing to inject
+        if not rag_context and not tool_result_text:
+            return messages
+
+        # Find the last user message index
+        last_user_idx = None
+        for i in range(len(messages) - 1, -1, -1):
+            if messages[i]["role"] == "user":
+                last_user_idx = i
+                break
+
+        if last_user_idx is None:
+            return messages
+
+        # Build the context injection block
+        context_parts = []
+        if rag_context:
+            context_parts.append(rag_context)
+        if tool_result_text:
+            context_parts.append(tool_result_text)
+
+        context_block = "\n\n".join(context_parts)
+
+        # Prepend context to the last user message (copy — never mutate sessions)
+        augmented = list(messages)
+        original_content = augmented[last_user_idx]["content"]
+        augmented[last_user_idx] = {
+            "role": "user",
+            "content": f"{context_block}\n\nCustomer question: {original_content}",
+        }
+        return augmented
 
