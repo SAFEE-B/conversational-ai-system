@@ -2,6 +2,7 @@ import json
 import logging
 import asyncio
 import base64
+import os
 from contextlib import asynccontextmanager
 from concurrent.futures import ThreadPoolExecutor
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
@@ -10,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from conversation_manager import ConversationManager
 from llm_engine import LLMEngine
 from voice_engine import ASREngine, TTSEngine
+from retrieval.retriever import DocumentRetriever
+from tool_orchestrator import ToolOrchestrator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,14 +22,23 @@ llm_engine: LLMEngine = None
 conversation_manager: ConversationManager = None
 asr_engine: ASREngine = None
 tts_engine: TTSEngine = None
+retriever: DocumentRetriever = None
+orchestrator: ToolOrchestrator = None
 
 # Voice jobs are CPU-heavy; keep the WebSocket event loop responsive.
 voice_executor = ThreadPoolExecutor(max_workers=4)
 
+# ─── Path configuration (from env or sensible defaults) ──────────────────────
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_CHROMA_DIR = os.environ.get("CHROMA_PERSIST_DIR", os.path.join(_BASE_DIR, "..", "chroma_db"))
+_CRM_DB_PATH = os.environ.get("CRM_DB_PATH", os.path.join(_BASE_DIR, "..", "crm.db"))
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global llm_engine, conversation_manager, asr_engine, tts_engine
-    model_path = "models/qwen2.5-0.5b-instruct-q4_k_m.gguf"
+    global llm_engine, conversation_manager, asr_engine, tts_engine, retriever, orchestrator
+
+    model_path = os.environ.get("MODEL_PATH", "models/qwen2.5-0.5b-instruct-q4_k_m.gguf")
     try:
         llm_engine = LLMEngine(model_path=model_path)
         logger.info("LLM Engine initialized successfully.")
@@ -34,6 +46,23 @@ async def lifespan(app: FastAPI):
         logger.error(f"Failed to initialize LLM Engine: {e}")
 
     conversation_manager = ConversationManager(max_history=10)
+
+    # RAG retriever — loads embedding model + connects to ChromaDB
+    try:
+        retriever = DocumentRetriever(chroma_persist_dir=_CHROMA_DIR, top_k=3)
+        retriever.load()
+        logger.info("RAG Retriever initialized successfully.")
+    except Exception as e:
+        logger.warning(f"RAG Retriever not available (run index_documents.py first): {e}")
+        retriever = None
+
+    # Tool Orchestrator — pharmacy tools (CRM, drug interaction, dosage, med info)
+    try:
+        orchestrator = ToolOrchestrator(crm_db_path=_CRM_DB_PATH)
+        logger.info("Tool Orchestrator initialized successfully.")
+    except Exception as e:
+        logger.error(f"Failed to initialize Tool Orchestrator: {e}")
+        orchestrator = None
 
     # Voice engines: local ASR + local TTS (CPU pipeline).
     try:
@@ -51,6 +80,44 @@ async def lifespan(app: FastAPI):
         logger.error(f"Failed to initialize TTS Engine: {e}")
     yield
     logger.info("Shutting down gracefully.")
+
+
+async def _enrich_message(user_content: str, session_id: str):
+    """
+    Run RAG retrieval and tool orchestration concurrently before LLM generation.
+    Returns (rag_context_str, tool_name, tool_result_str).
+    All three operations complete before the LLM starts — preserves streaming.
+    """
+    rag_task = asyncio.create_task(_rag_retrieve(user_content))
+    tool_task = asyncio.create_task(_tool_dispatch(user_content, session_id))
+
+    rag_context, (tool_name, tool_result_text) = await asyncio.gather(rag_task, tool_task)
+    return rag_context, tool_name, tool_result_text
+
+
+async def _rag_retrieve(query: str) -> str:
+    if retriever is None or not retriever.is_ready():
+        return ""
+    try:
+        chunks = retriever.retrieve(query)
+        return retriever.format_context(chunks)
+    except Exception as e:
+        logger.warning(f"RAG retrieval error: {e}")
+        return ""
+
+
+async def _tool_dispatch(message: str, session_id: str):
+    if orchestrator is None:
+        return (None, "")
+    try:
+        tool_name, tool_result = await orchestrator.process(message, session_id)
+        if tool_name and tool_result:
+            result_text = orchestrator.format_tool_result(tool_name, tool_result)
+            return (tool_name, result_text)
+        return (None, "")
+    except Exception as e:
+        logger.warning(f"Tool dispatch error: {e}")
+        return (None, "")
 
 app = FastAPI(lifespan=lifespan)
 
@@ -124,10 +191,20 @@ async def websocket_endpoint(websocket: WebSocket):
                         continue
 
                     conversation_manager.add_user_message(session_id, content)
-                    messages = conversation_manager.get_messages(session_id)
+
+                    # Enrich: RAG retrieval + tool call (concurrent, before LLM starts)
+                    rag_context, tool_name, tool_result_text = await _enrich_message(content, session_id)
+                    messages = conversation_manager.build_augmented_messages(
+                        session_id,
+                        rag_context=rag_context,
+                        tool_name=tool_name or "",
+                        tool_result_text=tool_result_text,
+                    )
 
                     full_response = ""
                     await websocket.send_json({"type": "start"})
+                    if tool_name:
+                        await websocket.send_json({"type": "tool_used", "tool": tool_name})
 
                     try:
                         async for token in llm_engine.stream_chat(messages):
@@ -183,7 +260,16 @@ async def websocket_endpoint(websocket: WebSocket):
                     conversation_manager.add_user_message(session_id, transcript)
                     await websocket.send_json({"type": "voice_transcript", "content": transcript})
 
-                    messages = conversation_manager.get_messages(session_id)
+                    # Enrich: RAG retrieval + tool call (concurrent, before LLM starts)
+                    rag_context, tool_name, tool_result_text = await _enrich_message(transcript, session_id)
+                    messages = conversation_manager.build_augmented_messages(
+                        session_id,
+                        rag_context=rag_context,
+                        tool_name=tool_name or "",
+                        tool_result_text=tool_result_text,
+                    )
+                    if tool_name:
+                        await websocket.send_json({"type": "tool_used", "tool": tool_name})
 
                     full_response = ""
                     tts_buffer = ""
