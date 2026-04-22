@@ -2176,7 +2176,7 @@ Ask our HealthFirst pharmacist for guidance on choosing quality supplements.
 count = 0
 for filename, content in docs.items():
     filepath = os.path.join(DOCS_DIR, filename)
-    with open(filepath, "w") as f:
+    with open(filepath, "w", encoding="utf-8") as f:
         f.write(content.strip())
     count += 1
 

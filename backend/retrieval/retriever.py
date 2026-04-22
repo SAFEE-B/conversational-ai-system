@@ -26,7 +26,7 @@ class DocumentRetriever:
     def load(self):
         """Load the embedding model and connect to ChromaDB. Call once at startup."""
         logger.info(f"Loading retriever with model: {self.embedding_model_name}")
-        self.model = SentenceTransformer(self.embedding_model_name)
+        self.model = SentenceTransformer(self.embedding_model_name, local_files_only=True)
         client = chromadb.PersistentClient(
             path=self.chroma_persist_dir,
             settings=Settings(anonymized_telemetry=False),
@@ -80,7 +80,7 @@ class DocumentRetriever:
             oldest = next(iter(self._query_cache))
             del self._query_cache[oldest]
         self._query_cache[cache_key] = chunks
-
+        logger.info(f"RAG retrieved {len(chunks)} chunks for query: \"{query[:60]}\"")
         return chunks
 
     def format_context(self, chunks: List[Dict[str, Any]]) -> str:
