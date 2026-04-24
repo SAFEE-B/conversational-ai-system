@@ -103,8 +103,6 @@ class ToolOrchestrator:
         self.dosage_calc = DosageCalculator()
         self.med_info = MedicationInfoLookup()
 
-        self._tool_result_cache: Dict[str, Any] = {}
-
     # ─── Public API ─────────────────────────────────────────────────────────
 
     async def process(
@@ -114,17 +112,9 @@ class ToolOrchestrator:
     ) -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
         """
         Detect intent from message and run the appropriate tool (if any).
-
         Returns (tool_name, tool_result) or (None, None) if no tool is needed.
-        Results are cached per (session_id, message) pair to avoid redundant calls.
         """
-        cache_key = f"{session_id}::{message}"
-        if cache_key in self._tool_result_cache:
-            return self._tool_result_cache[cache_key]
-
-        result = await self._dispatch(message, session_id)
-        self._tool_result_cache[cache_key] = result
-        return result
+        return await self._dispatch(message, session_id)
 
     def format_tool_result(self, tool_name: str, result: Dict[str, Any]) -> str:
         """Convert a tool result dict into a concise natural-language context block."""

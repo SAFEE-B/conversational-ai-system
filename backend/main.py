@@ -346,11 +346,20 @@ async def websocket_endpoint(websocket: WebSocket):
                                 asyncio.create_task(_tts_and_send(seq, tts_buffer.strip()))
                             )
 
+                        # Wait for all TTS chunks to finish before signalling end.
+                        # This ensures audio is fully delivered and the voice_executor
+                        # is free before the next request can begin.
+                        if pending_audio_tasks:
+                            await asyncio.gather(*pending_audio_tasks, return_exceptions=True)
+
                         await websocket.send_json({"type": "end"})
                         conversation_manager.add_assistant_message(session_id, full_response)
 
                     except Exception as e:
                         logger.error(f"Voice generation error: {e}")
+                        # Cancel any in-flight TTS tasks so they don't linger
+                        for t in pending_audio_tasks:
+                            t.cancel()
                         await websocket.send_json(
                             {"type": "error", "content": "Sorry, I encountered an error generating a response."}
                         )

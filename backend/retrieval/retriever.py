@@ -87,8 +87,7 @@ class DocumentRetriever:
         """Format retrieved chunks into a concise context block for the prompt."""
         if not chunks:
             return ""
-        lines = ["[Relevant pharmacy information retrieved]"]
-        for i, chunk in enumerate(chunks, 1):
-            source = chunk["source"].replace("_", " ").replace(".txt", "").replace(".md", "")
-            lines.append(f"\n--- Source: {source} ---\n{chunk['text']}")
-        return "\n".join(lines)
+        lines = ["Reference information (use only what is relevant to the customer's question — do not repeat all of it):"]
+        for chunk in chunks:
+            lines.append(chunk["text"])
+        return "\n\n".join(lines)

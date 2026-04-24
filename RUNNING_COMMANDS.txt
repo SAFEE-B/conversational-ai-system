@@ -1,0 +1,104 @@
+============================================================
+  HEALTHFIRST PHARMACY CHATBOT — RUNNING COMMANDS
+============================================================
+
+PREREQUISITES
+-------------
+- Python 3.10+
+- pip
+- (Optional) Docker + Docker Compose for containerised run
+
+------------------------------------------------------------
+OPTION A: MANUAL (Development)
+------------------------------------------------------------
+
+STEP 1 — Create & activate virtual environment
+  (run from repo root)
+
+  Windows:
+    python -m venv venv
+    venv\Scripts\activate
+
+  macOS / Linux:
+    python3 -m venv venv
+    source venv/bin/activate
+
+STEP 2 — Install Python dependencies
+
+    pip install -r backend/requirements.txt
+
+STEP 3 — Download the LLM model (~400 MB, one-time)
+
+    python backend/download_model.py
+
+STEP 4 — Index documents for RAG (~2 min, one-time)
+
+    python scripts/index_documents.py
+
+STEP 5 — Start the backend (Terminal 1)
+
+    cd backend
+    uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+  API docs (Swagger UI): http://localhost:8000/docs
+  WebSocket endpoint:    ws://localhost:8000/ws/chat
+
+STEP 6 — Start the frontend (Terminal 2)
+
+    cd frontend
+    python -m http.server 8080
+
+  Open in browser: http://localhost:8080
+
+------------------------------------------------------------
+OPTION B: DOCKER COMPOSE (All-in-one)
+------------------------------------------------------------
+
+  docker-compose up --build
+
+  Frontend:  http://localhost:80
+  Backend:   http://localhost:8000
+  API docs:  http://localhost:8000/docs
+
+  First build takes ~10 minutes (downloads models inside container).
+  Subsequent starts are fast:
+
+  docker-compose up
+
+  To stop:
+
+  docker-compose down
+
+------------------------------------------------------------
+OPTIONAL — Download voice models (Vosk ASR + Piper TTS)
+------------------------------------------------------------
+
+  python backend/download_voice_models.py
+
+  Required only if you want voice input / output.
+  Downloads an additional ~50–200 MB depending on the model.
+
+------------------------------------------------------------
+QUICK REFERENCE
+------------------------------------------------------------
+
+  Task                        Command
+  -------                     -------
+  Install dependencies        pip install -r backend/requirements.txt
+  Download LLM model          python backend/download_model.py
+  Index documents (RAG)       python scripts/index_documents.py
+  Run backend                 uvicorn main:app --host 0.0.0.0 --port 8000
+  Run frontend                python -m http.server 8080  (inside frontend/)
+  Full stack (Docker)         docker-compose up --build
+  Access chat UI              http://localhost:8080
+  Access API docs             http://localhost:8000/docs
+
+------------------------------------------------------------
+NOTES
+------------------------------------------------------------
+
+- Steps 3 and 4 are one-time setup steps; skip them on subsequent runs.
+- The backend must be running before opening the frontend.
+- To change the backend URL the frontend connects to, edit frontend/config.js.
+- The venv/ and chroma_db/ directories are git-ignored; recreate them
+  locally using the steps above.

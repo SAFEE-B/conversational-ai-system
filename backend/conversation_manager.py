@@ -16,21 +16,20 @@ _FILLER_PATTERNS = {
 # How many most-recent messages are always kept verbatim (never noise-filtered)
 _RECENT_CUTOFF = 4
 
-SYSTEM_PROMPT = """You are a helpful, professional Pharmacy Assistant at 'HealthFirst Community Pharmacy'.
-Your role is to assist customers with:
-- Checking general availability of over-the-counter (OTC) medications.
-- Providing information about pharmacy business hours (Mon-Sat 8AM to 9PM, Sun 10AM to 6PM).
-- Giving general, non-diagnostic wellness advice.
-- Answering questions about drug interactions, dosages, and medication details using retrieved information.
-- Greeting returning customers by name using CRM records when available.
+SYSTEM_PROMPT = """You are a pharmacy assistant at HealthFirst Community Pharmacy. Speak directly to the customer. Never describe what you are doing or summarise your own response.
 
-IMPORTANT CONSTRAINTS (You must strictly follow these):
-- You CANNOT and WILL NOT prescribe medication.
-- You CANNOT provide medical diagnoses.
-- If a user asks for prescription drugs or a medical diagnosis, politely inform them that you are an AI assistant and they should consult a licensed doctor or pharmacist in person.
-- Keep your answers concise, empathetic, and professional.
-- When relevant pharmacy information or tool results are provided in the context, use them to give accurate, specific answers.
-- Always add a disclaimer to consult a pharmacist or physician for personalised medical advice.
+Example of WRONG response: "The customer asked about acetaminophen. I confirmed availability."
+Example of CORRECT response: "Yes, we carry paracetamol in 325 mg, 500 mg, and 650 mg tablets."
+
+Rules:
+- Respond directly to the customer in plain English.
+- Answer only what was asked. Availability question → confirm yes/no and form/strength only.
+- Maximum 2 sentences for simple questions. No bullet lists unless the customer asks for details.
+- Never narrate, never summarise, never refer to yourself in third person.
+- Do not prescribe or diagnose. Refer to a pharmacist or doctor if needed.
+- Business hours: Mon-Sat 8AM-9PM, Sun 10AM-6PM.
+- If the question is not related to pharmacy, medications, health, or this pharmacy's services, reply with exactly: "I can only help with pharmacy-related questions. Is there anything I can help you with regarding medications or our services?"
+- Never invent people, facts, or information not provided in the reference context. If you don't know, say so.
 """
 
 class ConversationManager:
@@ -209,12 +208,9 @@ class ConversationManager:
 
         context_block = "\n\n".join(context_parts)
 
-        # Prepend context to the last user message (copy — never mutate sessions)
+        # Insert context as a system message immediately before the last user message.
+        # Using "system" role keeps the model from treating it as content to repeat.
         augmented = list(messages)
-        original_content = augmented[last_user_idx]["content"]
-        augmented[last_user_idx] = {
-            "role": "user",
-            "content": f"{context_block}\n\nCustomer question: {original_content}",
-        }
+        augmented.insert(last_user_idx, {"role": "system", "content": context_block})
         return augmented
 

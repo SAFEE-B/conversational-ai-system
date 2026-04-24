@@ -6,6 +6,69 @@ import subprocess
 import tempfile
 import threading
 
+# Pharmacy-domain vocabulary injected into Vosk's language model rescoring.
+# "[unk]" must stay in the list so the recognizer accepts out-of-vocab words
+# instead of forcing every utterance into one of the listed phrases.
+# _PHARMACY_GRAMMAR = json.dumps([
+#     # Generic medication names
+#     "acetaminophen", "ibuprofen", "aspirin", "naproxen",
+#     "diphenhydramine", "loratadine", "cetirizine", "fexofenadine",
+#     "omeprazole", "famotidine", "ranitidine", "esomeprazole",
+#     "pseudoephedrine", "phenylephrine", "guaifenesin", "dextromethorphan",
+#     "loperamide", "bismuth subsalicylate", "simethicone",
+#     "melatonin", "clotrimazole", "hydrocortisone",
+#     "neomycin", "bacitracin", "polymyxin",
+#     "simvastatin", "atorvastatin", "warfarin", "metformin",
+#     "metronidazole", "clopidogrel", "lisinopril", "amoxicillin",
+#     # Brand names
+#     "tylenol", "advil", "motrin", "aleve", "benadryl",
+#     "claritin", "zyrtec", "allegra",
+#     "prilosec", "nexium", "pepcid", "zantac",
+#     "sudafed", "mucinex", "robitussin", "dayquil", "nyquil",
+#     "imodium", "pepto bismol", "gas x",
+#     "neosporin", "cortaid", "cortizone", "lotrimin",
+#     # Dosage and instruction phrases
+#     "milligrams", "milligram", "mg", "milliliters", "milliliter", "ml",
+#     "twice a day", "three times a day", "once a day", "every four hours",
+#     "every six hours", "every eight hours", "as needed",
+#     "take with food", "take with water", "do not crush",
+#     "maximum dose", "recommended dose", "daily dose",
+#     # Intent phrases
+#     "drug interaction", "side effects", "dosage", "what is it used for",
+#     "can i take", "is it safe", "take together", "what is the dose",
+#     "how much should i take", "how often", "tell me about",
+#     "do you have", "is it available", "over the counter",
+#     "pharmacy hours", "when do you open", "when do you close",
+#     "my name is", "i am", "remember me",
+#     # Fallback: allow anything not in the list
+#     "[unk]",
+# ])
+
+
+_PHARMACY_GRAMMAR = json.dumps([
+    # Generic medication names
+    "pain relief",
+
+    # Common OTC pain medications
+    "acetaminophen", "ibuprofen", "naproxen", "aspirin","paracetamol","panadol"
+
+
+    # Dosage and instruction phrases
+    "milligrams", "milligram", "mg", "milliliters", "milliliter", "ml",
+    "twice a day", "three times a day", "once a day", "every four hours",
+    "every six hours", "every eight hours", "as needed",
+    "take with food", "take with water", "do not crush",
+    "maximum dose", "recommended dose", "daily dose",
+    # Intent phrases
+    "drug interaction", "side effects", "dosage", "what is it used for",
+    "can i take", "is it safe", "take together", "what is the dose",
+    "how much should i take", "how often", "tell me about",
+    "do you have", "is it available", "over the counter",
+    "pharmacy hours", "when do you open", "when do you close",
+    "my name is", "i am", "remember me",
+    # Fallback: allow anything not in the list
+    "[unk]",
+])
 
 class ASREngine:
     """
@@ -52,7 +115,8 @@ class ASREngine:
 
             from vosk import KaldiRecognizer
 
-            recognizer = KaldiRecognizer(self.model, self.sample_rate)
+            recognizer = KaldiRecognizer(self.model, self.sample_rate, _PHARMACY_GRAMMAR)
+            # recognizer = KaldiRecognizer(self.model, self.sample_rate)
             recognizer.AcceptWaveform(pcm_bytes)
             result = json.loads(recognizer.FinalResult())
             return (result.get("text") or "").strip()
