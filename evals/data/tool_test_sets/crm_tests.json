@@ -1,0 +1,122 @@
+[
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_001",
+    "utterance": "Hi, my name is Ahmed Khan.",
+    "expected_tool_call": {
+      "tool_name": "crm_tool",
+      "args": {"action": "create_user", "name": "Ahmed Khan"}
+    },
+    "should_invoke": true,
+    "notes": "Matches 'my name is' pattern → create_user with extracted name."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_002",
+    "utterance": "I'm Sarah.",
+    "expected_tool_call": {
+      "tool_name": "crm_tool",
+      "args": {"action": "create_user", "name": "Sarah"}
+    },
+    "should_invoke": true,
+    "notes": "Matches 'i'm [Name]' pattern → create_user."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_003",
+    "utterance": "Do you know me?",
+    "expected_tool_call": {
+      "tool_name": "crm_tool",
+      "args": {"action": "get_user"}
+    },
+    "should_invoke": true,
+    "notes": "Matches 'do you know me' pattern → get_user."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_004",
+    "utterance": "Who am I?",
+    "expected_tool_call": {
+      "tool_name": "crm_tool",
+      "args": {"action": "get_user"}
+    },
+    "should_invoke": true,
+    "notes": "Matches 'who am i' pattern → get_user."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_005",
+    "utterance": "I was here last visit and you had my details on file.",
+    "expected_tool_call": {
+      "tool_name": "crm_tool",
+      "args": {"action": "get_user"}
+    },
+    "should_invoke": true,
+    "notes": "Matches 'last visit' pattern → get_user."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_006",
+    "utterance": "Please remember me, I'm a regular customer.",
+    "expected_tool_call": {
+      "tool_name": "crm_tool",
+      "args": {"action": "create_user"}
+    },
+    "should_invoke": true,
+    "notes": "Matches 'remember me' pattern → create_user."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_007",
+    "utterance": "My phone number is 0321-1234567.",
+    "expected_tool_call": {
+      "tool_name": "crm_tool",
+      "args": {"action": "get_user"}
+    },
+    "should_invoke": true,
+    "notes": "Matches 'my number' / 'my phone' pattern → CRM lookup/create."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_008",
+    "utterance": "What are the pharmacy opening hours on Saturday?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Hours question — no CRM pattern matched. Should use RAG, not CRM."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_009",
+    "utterance": "What are the side effects of cetirizine?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Medication info query — should invoke get_medication_info, not CRM."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_010",
+    "utterance": "How much does ibuprofen cost?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Pricing/availability question — no CRM pattern. Should go to RAG or plain LLM."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_011",
+    "utterance": "Can you tell me about aspirin?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Single-medication info query → get_medication_info, not CRM."
+  },
+  {
+    "tool": "crm_tool",
+    "test_id": "crm_012",
+    "utterance": "Do you remember my contact information?",
+    "expected_tool_call": {
+      "tool_name": "crm_tool",
+      "args": {"action": "get_user"}
+    },
+    "should_invoke": true,
+    "notes": "Matches 'do you remember' + 'my contact' patterns → get_user."
+  }
+]

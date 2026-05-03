@@ -1,0 +1,152 @@
+[
+  {
+    "query_id": "rag_001",
+    "query": "What are the pharmacy opening hours on weekdays?",
+    "relevant_chunk_ids": ["pharmacy_hours_services.txt::chunk0"],
+    "notes": "Direct factual query. pharmacy_hours_services.txt contains Monday-Saturday 8AM-9PM, Sunday 10AM-6PM."
+  },
+  {
+    "query_id": "rag_002",
+    "query": "How do I safely dispose of old or expired prescription medications?",
+    "relevant_chunk_ids": ["medication_disposal.txt::chunk0"],
+    "notes": "medication_disposal.txt covers DEA take-back, mail-back, at-home trash method (coffee grounds/kitty litter), and FDA Flush List."
+  },
+  {
+    "query_id": "rag_003",
+    "query": "What clinical services does HealthFirst Community Pharmacy offer?",
+    "relevant_chunk_ids": ["pharmacy_hours_services.txt::chunk0", "medication_counseling.txt::chunk0"],
+    "notes": "pharmacy_hours_services.txt lists immunizations, BP checks, MTM consultations. medication_counseling.txt gives detail on counseling services."
+  },
+  {
+    "query_id": "rag_004",
+    "query": "What is the recommended OTC dose of ibuprofen for adults?",
+    "relevant_chunk_ids": ["ibuprofen_guide.txt::chunk0", "pain_management.txt::chunk0"],
+    "notes": "ibuprofen_guide.txt has dosing table (400 mg every 6h, max 1200 mg/day OTC). pain_management.txt also references 200-400 mg."
+  },
+  {
+    "query_id": "rag_005",
+    "query": "How do I transfer my prescription from another pharmacy to HealthFirst?",
+    "relevant_chunk_ids": ["prescription_transfer.txt::chunk0"],
+    "notes": "prescription_transfer.txt describes the phone-in and walk-in transfer process, what info is needed, and timeline."
+  },
+  {
+    "query_id": "rag_006",
+    "query": "What antihistamines are safe for a 4-year-old child?",
+    "relevant_chunk_ids": ["pediatric_dosing.txt::chunk0", "allergy_relief.txt::chunk0"],
+    "notes": "pediatric_dosing.txt gives loratadine 5mg (ages 2-5) and cetirizine 2.5mg (ages 2-5). allergy_relief.txt lists OTC antihistamine options with ages."
+  },
+  {
+    "query_id": "rag_007",
+    "query": "What medications should be stored in the refrigerator?",
+    "relevant_chunk_ids": ["storage_guidelines.txt::chunk0"],
+    "notes": "storage_guidelines.txt lists refrigerator items: insulin, injectable medications, liquid antibiotics."
+  },
+  {
+    "query_id": "rag_008",
+    "query": "What is the difference between a generic and brand-name medication?",
+    "relevant_chunk_ids": ["generic_vs_brand.txt::chunk0"],
+    "notes": "generic_vs_brand.txt covers FDA bioequivalence, same active ingredients, cost difference, narrow therapeutic index exceptions."
+  },
+  {
+    "query_id": "rag_009",
+    "query": "How do I treat a minor cut or scrape at home?",
+    "relevant_chunk_ids": ["wound_care.txt::chunk0"],
+    "notes": "wound_care.txt describes the 5-step wound care process: pressure, rinse, antiseptic, antibiotic ointment, cover."
+  },
+  {
+    "query_id": "rag_010",
+    "query": "How can I refill my prescription at HealthFirst?",
+    "relevant_chunk_ids": ["prescription_refill_policy.txt::chunk0"],
+    "notes": "prescription_refill_policy.txt covers in-store, phone, web/app, and auto-refill options. Also covers controlled substance restrictions."
+  },
+  {
+    "query_id": "rag_011",
+    "query": "Which medications are potentially dangerous for elderly patients over 65?",
+    "relevant_chunk_ids": ["elderly_medication_safety.txt::chunk0"],
+    "notes": "elderly_medication_safety.txt covers Beers Criteria: benzodiazepines, diphenhydramine, anticholinergics — fall risk, delirium."
+  },
+  {
+    "query_id": "rag_012",
+    "query": "Does grapefruit juice interact with any medications?",
+    "relevant_chunk_ids": ["food_drug_interactions.txt::chunk0", "drug_interactions_overview.txt::chunk0"],
+    "notes": "food_drug_interactions.txt specifically covers grapefruit/CYP3A4 and lists affected drugs. drug_interactions_overview.txt mentions it briefly."
+  },
+  {
+    "query_id": "rag_013",
+    "query": "What over-the-counter medications can reduce a fever?",
+    "relevant_chunk_ids": ["fever_management.txt::chunk0"],
+    "notes": "fever_management.txt covers acetaminophen, ibuprofen, aspirin (adults only) as OTC fever reducers with doses."
+  },
+  {
+    "query_id": "rag_014",
+    "query": "What OTC sleep aids are available without a prescription?",
+    "relevant_chunk_ids": ["sleep_disorders.txt::chunk0"],
+    "notes": "sleep_disorders.txt covers diphenhydramine, doxylamine, and melatonin as OTC options with doses and caveats."
+  },
+  {
+    "query_id": "rag_015",
+    "query": "What pain relief options are available OTC for back pain?",
+    "relevant_chunk_ids": ["pain_management.txt::chunk0"],
+    "notes": "pain_management.txt covers NSAIDs for inflammatory back pain, acetaminophen as NSAID alternative, and topical options."
+  },
+  {
+    "query_id": "rag_016",
+    "query": "Is it safe to take ibuprofen during pregnancy?",
+    "relevant_chunk_ids": ["pregnancy_medication_safety.txt::chunk0"],
+    "notes": "pregnancy_medication_safety.txt advises avoiding NSAIDs especially in third trimester, recommends acetaminophen as generally safe."
+  },
+  {
+    "query_id": "rag_017",
+    "query": "What is medication counseling and when is it available at the pharmacy?",
+    "relevant_chunk_ids": ["medication_counseling.txt::chunk0"],
+    "notes": "medication_counseling.txt defines what counseling covers, when it is offered (new Rx, high-risk meds, upon request), and MTM services."
+  },
+  {
+    "query_id": "rag_018",
+    "query": "What are common allergy symptoms and how can I treat them with OTC products?",
+    "relevant_chunk_ids": ["allergy_relief.txt::chunk0"],
+    "notes": "allergy_relief.txt lists allergy types, OTC antihistamines (loratadine, cetirizine, diphenhydramine), nasal sprays, and eye drops."
+  },
+  {
+    "query_id": "rag_019",
+    "query": "What is the best way to treat a cold or flu at home?",
+    "relevant_chunk_ids": ["cold_and_flu_guide.txt::chunk0"],
+    "notes": "cold_and_flu_guide.txt differentiates cold vs flu and recommends OTC treatments per symptom (fever, congestion, runny nose, cough)."
+  },
+  {
+    "query_id": "rag_020",
+    "query": "What is the correct acetaminophen dose for a child under 12?",
+    "relevant_chunk_ids": ["pediatric_dosing.txt::chunk0", "acetaminophen_guide.txt::chunk0"],
+    "notes": "pediatric_dosing.txt gives 10-15 mg/kg every 4-6h, max 75 mg/kg/day. acetaminophen_guide.txt supplements with formulation details."
+  },
+  {
+    "query_id": "rag_021",
+    "query": "What signs indicate that a wound has become infected?",
+    "relevant_chunk_ids": ["wound_care.txt::chunk0"],
+    "notes": "wound_care.txt lists infection signs: increasing redness, warmth, swelling, pus, red streaks spreading from wound."
+  },
+  {
+    "query_id": "rag_022",
+    "query": "Does HealthFirst accept Medicare Part D insurance?",
+    "relevant_chunk_ids": ["insurance_and_billing.txt::chunk0"],
+    "notes": "insurance_and_billing.txt explicitly lists Medicare Part D as an accepted plan."
+  },
+  {
+    "query_id": "rag_023",
+    "query": "What medications should never be given to children?",
+    "relevant_chunk_ids": ["pediatric_dosing.txt::chunk0", "otc_safety_tips.txt::chunk0"],
+    "notes": "pediatric_dosing.txt says do NOT give aspirin (Reye's) or bismuth subsalicylate to children. otc_safety_tips.txt warns about adult formulations."
+  },
+  {
+    "query_id": "rag_024",
+    "query": "What are the risks of taking multiple medications at the same time?",
+    "relevant_chunk_ids": ["drug_interactions_overview.txt::chunk0", "elderly_medication_safety.txt::chunk0"],
+    "notes": "drug_interactions_overview.txt covers polypharmacy and types of interactions. elderly_medication_safety.txt mentions polypharmacy risk for elderly."
+  },
+  {
+    "query_id": "rag_025",
+    "query": "How should I properly store my medications at home to keep them effective?",
+    "relevant_chunk_ids": ["storage_guidelines.txt::chunk0"],
+    "notes": "storage_guidelines.txt covers room temperature (59-77F), avoiding bathroom/heat/humidity/light, child safety, and fridge items."
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-05-03 13:19:35",
+  "rag_precision_at_3": 0.4133,
+  "rag_recall_at_3": 0.98,
+  "rag_mrr": 0.96,
+  "rag_faithfulness": null,
+  "task_completion_rate": null,
+  "policy_adherence_rate": null,
+  "mean_coherence_score": null,
+  "max_sustainable_concurrency": null,
+  "thresholds": {
+    "task_completion_rate": 0.8,
+    "policy_adherence_rate": 0.85,
+    "coherence_score": 0.6,
+    "rag_precision_at_3": 0.35,
+    "rag_recall_at_3": 0.85,
+    "rag_mrr": 0.8,
+    "rag_faithfulness": 0.7,
+    "crm_crud_accuracy": 1.0,
+    "tool_invocation_tpr": 0.8,
+    "tool_invocation_fpr": 0.1,
+    "tool_argument_accuracy": 0.75
+  },
+  "ttft_median_limit_s": 2.0,
+  "e2e_median_limit_s": 10.0
+}

@@ -1,0 +1,17 @@
+{
+  "id": "conv_010",
+  "domain": "pharmacy",
+  "category": "edge_case",
+  "description": "Tests system robustness: empty input, very long input (>2000 chars), and a non-English query (Arabic).",
+  "turns": [
+    {"role": "user", "content": ""},
+    {"role": "assistant", "content": ""},
+    {"role": "user", "content": "I have a question about medications. I have been taking ibuprofen for the past three weeks every single day multiple times a day and I am wondering if this is safe. I also take aspirin daily for my heart condition as prescribed by my doctor. Additionally I take omeprazole for my acid reflux every morning. I have noticed some stomach pain and I am not sure if this is related to the medications. I also sometimes take diphenhydramine to help me sleep at night. I read online that some of these medications can interact with each other and I am concerned. Can you please tell me everything about each of these medications, all their interactions with each other, all their side effects, all their dosing information, all the warnings, and also whether I should be worried about liver or kidney damage from taking all of these together for such a long time? I would appreciate a very detailed and comprehensive answer covering every possible concern and every possible interaction. Thank you so much for your help."},
+    {"role": "assistant", "content": ""},
+    {"role": "user", "content": "هل يمكنني تناول الإيبوبروفين مع الباراسيتامول؟"},
+    {"role": "assistant", "content": ""}
+  ],
+  "expected_outcome": "Turn 1 (empty): server ignores it or responds gracefully — no crash or unhandled error. Turn 2 (very long): system returns a coherent, non-empty response without crashing. Turn 3 (Arabic): system responds in some way — ideally in English or acknowledges language — no crash.",
+  "task_completed": false,
+  "rubric": "Score task_completion=1 if ALL THREE turns receive a non-empty, non-error response (or the empty input is silently handled). Score=0 if any turn causes a server error (HTTP 500, WS disconnect, exception). Coherence is secondary — the primary test is graceful degradation. Note: empty input may be filtered by the server before reaching the LLM, which counts as passing."
+}

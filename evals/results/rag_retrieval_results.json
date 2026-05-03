@@ -1,0 +1,492 @@
+{
+  "num_queries": 25,
+  "precision@3": 0.4133,
+  "precision@5": 0.256,
+  "recall@3": 0.98,
+  "recall@5": 1.0,
+  "mrr": 0.96,
+  "per_query": [
+    {
+      "query_id": "rag_001",
+      "query": "What are the pharmacy opening hours on weekdays?",
+      "relevant_chunk_ids": [
+        "pharmacy_hours_services.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "pharmacy_hours_services.txt::chunk0",
+        "prescription_refill_policy.txt::chunk0",
+        "prescription_transfer.txt::chunk0",
+        "storage_guidelines.txt::chunk0",
+        "pediatric_dosing.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_002",
+      "query": "How do I safely dispose of old or expired prescription medications?",
+      "relevant_chunk_ids": [
+        "medication_disposal.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "medication_disposal.txt::chunk0",
+        "medication_expiration.txt::chunk0",
+        "medication_returns_policy.txt::chunk0",
+        "storage_guidelines.txt::chunk0",
+        "prescription_refill_policy.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_003",
+      "query": "What clinical services does HealthFirst Community Pharmacy offer?",
+      "relevant_chunk_ids": [
+        "pharmacy_hours_services.txt::chunk0",
+        "medication_counseling.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "pharmacy_hours_services.txt::chunk0",
+        "insurance_and_billing.txt::chunk0",
+        "prescription_transfer.txt::chunk0",
+        "medication_counseling.txt::chunk0",
+        "polypharmacy_risks.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.4,
+      "recall@3": 0.5,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_004",
+      "query": "What is the recommended OTC dose of ibuprofen for adults?",
+      "relevant_chunk_ids": [
+        "ibuprofen_guide.txt::chunk0",
+        "pain_management.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "ibuprofen_guide.txt::chunk0",
+        "pediatric_dosing.txt::chunk0",
+        "pain_management.txt::chunk0",
+        "otc_safety_tips.txt::chunk0",
+        "fever_management.txt::chunk0"
+      ],
+      "precision@3": 0.6667,
+      "precision@5": 0.4,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_005",
+      "query": "How do I transfer my prescription from another pharmacy to HealthFirst?",
+      "relevant_chunk_ids": [
+        "prescription_transfer.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "prescription_transfer.txt::chunk0",
+        "insurance_and_billing.txt::chunk0",
+        "medication_returns_policy.txt::chunk0",
+        "prescription_refill_policy.txt::chunk0",
+        "pharmacy_hours_services.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_006",
+      "query": "What antihistamines are safe for a 4-year-old child?",
+      "relevant_chunk_ids": [
+        "allergy_relief.txt::chunk0",
+        "pediatric_dosing.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "pediatric_dosing.txt::chunk0",
+        "allergy_relief.txt::chunk0",
+        "first_aid_kit_essentials.txt::chunk0",
+        "diphenhydramine_guide.txt::chunk0",
+        "loratadine_guide.txt::chunk0"
+      ],
+      "precision@3": 0.6667,
+      "precision@5": 0.4,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_007",
+      "query": "What medications should be stored in the refrigerator?",
+      "relevant_chunk_ids": [
+        "storage_guidelines.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "storage_guidelines.txt::chunk0",
+        "medication_disposal.txt::chunk0",
+        "medication_expiration.txt::chunk0",
+        "cold_and_flu_guide.txt::chunk0",
+        "pregnancy_medication_safety.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_008",
+      "query": "What is the difference between a generic and brand-name medication?",
+      "relevant_chunk_ids": [
+        "generic_vs_brand.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "generic_vs_brand.txt::chunk0",
+        "insurance_and_billing.txt::chunk0",
+        "polypharmacy_risks.txt::chunk0",
+        "medication_expiration.txt::chunk0",
+        "loratadine_guide.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_009",
+      "query": "How do I treat a minor cut or scrape at home?",
+      "relevant_chunk_ids": [
+        "wound_care.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "wound_care.txt::chunk0",
+        "first_aid_kit_essentials.txt::chunk0",
+        "neosporin_guide.txt::chunk0",
+        "hydrocortisone_cream_guide.txt::chunk0",
+        "clotrimazole_guide.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_010",
+      "query": "How can I refill my prescription at HealthFirst?",
+      "relevant_chunk_ids": [
+        "prescription_refill_policy.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "prescription_refill_policy.txt::chunk0",
+        "prescription_transfer.txt::chunk0",
+        "medication_disposal.txt::chunk0",
+        "medication_returns_policy.txt::chunk0",
+        "pharmacy_hours_services.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_011",
+      "query": "Which medications are potentially dangerous for elderly patients over 65?",
+      "relevant_chunk_ids": [
+        "elderly_medication_safety.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "elderly_medication_safety.txt::chunk0",
+        "polypharmacy_risks.txt::chunk0",
+        "medication_expiration.txt::chunk0",
+        "alcohol_drug_interactions.txt::chunk0",
+        "pregnancy_medication_safety.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_012",
+      "query": "Does grapefruit juice interact with any medications?",
+      "relevant_chunk_ids": [
+        "drug_interactions_overview.txt::chunk0",
+        "food_drug_interactions.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "food_drug_interactions.txt::chunk0",
+        "drug_interactions_overview.txt::chunk0",
+        "alcohol_drug_interactions.txt::chunk0",
+        "elderly_medication_safety.txt::chunk0",
+        "omeprazole_guide.txt::chunk0"
+      ],
+      "precision@3": 0.6667,
+      "precision@5": 0.4,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_013",
+      "query": "What over-the-counter medications can reduce a fever?",
+      "relevant_chunk_ids": [
+        "fever_management.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "fever_management.txt::chunk0",
+        "cold_and_flu_guide.txt::chunk0",
+        "allergy_relief.txt::chunk0",
+        "aspirin_guide.txt::chunk0",
+        "cough_treatment.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_014",
+      "query": "What OTC sleep aids are available without a prescription?",
+      "relevant_chunk_ids": [
+        "sleep_disorders.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "sleep_disorders.txt::chunk0",
+        "melatonin_guide.txt::chunk0",
+        "pain_management.txt::chunk0",
+        "allergy_relief.txt::chunk0",
+        "cold_and_flu_guide.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_015",
+      "query": "What pain relief options are available OTC for back pain?",
+      "relevant_chunk_ids": [
+        "pain_management.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "pain_management.txt::chunk0",
+        "oral_health.txt::chunk0",
+        "ibuprofen_guide.txt::chunk0",
+        "cold_and_flu_guide.txt::chunk0",
+        "managing_headaches.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_016",
+      "query": "Is it safe to take ibuprofen during pregnancy?",
+      "relevant_chunk_ids": [
+        "pregnancy_medication_safety.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "pregnancy_medication_safety.txt::chunk0",
+        "ibuprofen_guide.txt::chunk0",
+        "otc_safety_tips.txt::chunk0",
+        "pediatric_dosing.txt::chunk0",
+        "pain_management.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_017",
+      "query": "What is medication counseling and when is it available at the pharmacy?",
+      "relevant_chunk_ids": [
+        "medication_counseling.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "medication_counseling.txt::chunk0",
+        "pharmacy_hours_services.txt::chunk0",
+        "prescription_transfer.txt::chunk0",
+        "polypharmacy_risks.txt::chunk0",
+        "insurance_and_billing.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_018",
+      "query": "What are common allergy symptoms and how can I treat them with OTC products?",
+      "relevant_chunk_ids": [
+        "allergy_relief.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "allergy_relief.txt::chunk0",
+        "skin_conditions.txt::chunk0",
+        "cold_and_flu_guide.txt::chunk0",
+        "loratadine_guide.txt::chunk0",
+        "eye_care_otc.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_019",
+      "query": "What is the best way to treat a cold or flu at home?",
+      "relevant_chunk_ids": [
+        "cold_and_flu_guide.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "cough_treatment.txt::chunk0",
+        "cold_and_flu_guide.txt::chunk0",
+        "storage_guidelines.txt::chunk0",
+        "fever_management.txt::chunk0",
+        "first_aid_kit_essentials.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "query_id": "rag_020",
+      "query": "What is the correct acetaminophen dose for a child under 12?",
+      "relevant_chunk_ids": [
+        "pediatric_dosing.txt::chunk0",
+        "acetaminophen_guide.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "pediatric_dosing.txt::chunk0",
+        "otc_safety_tips.txt::chunk0",
+        "acetaminophen_guide.txt::chunk0",
+        "ibuprofen_guide.txt::chunk0",
+        "fever_management.txt::chunk0"
+      ],
+      "precision@3": 0.6667,
+      "precision@5": 0.4,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_021",
+      "query": "What signs indicate that a wound has become infected?",
+      "relevant_chunk_ids": [
+        "wound_care.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "wound_care.txt::chunk0",
+        "neosporin_guide.txt::chunk0",
+        "first_aid_kit_essentials.txt::chunk0",
+        "oral_health.txt::chunk0",
+        "hydrocortisone_cream_guide.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_022",
+      "query": "Does HealthFirst accept Medicare Part D insurance?",
+      "relevant_chunk_ids": [
+        "insurance_and_billing.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "insurance_and_billing.txt::chunk0",
+        "prior_authorization.txt::chunk0",
+        "pharmacy_hours_services.txt::chunk0",
+        "prescription_transfer.txt::chunk0",
+        "medication_returns_policy.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_023",
+      "query": "What medications should never be given to children?",
+      "relevant_chunk_ids": [
+        "pediatric_dosing.txt::chunk0",
+        "otc_safety_tips.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "pediatric_dosing.txt::chunk0",
+        "otc_safety_tips.txt::chunk0",
+        "storage_guidelines.txt::chunk0",
+        "medication_disposal.txt::chunk0",
+        "pregnancy_medication_safety.txt::chunk0"
+      ],
+      "precision@3": 0.6667,
+      "precision@5": 0.4,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "query_id": "rag_024",
+      "query": "What are the risks of taking multiple medications at the same time?",
+      "relevant_chunk_ids": [
+        "drug_interactions_overview.txt::chunk0",
+        "elderly_medication_safety.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "polypharmacy_risks.txt::chunk0",
+        "elderly_medication_safety.txt::chunk0",
+        "drug_interactions_overview.txt::chunk0",
+        "alcohol_drug_interactions.txt::chunk0",
+        "otc_safety_tips.txt::chunk0"
+      ],
+      "precision@3": 0.6667,
+      "precision@5": 0.4,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "query_id": "rag_025",
+      "query": "How should I properly store my medications at home to keep them effective?",
+      "relevant_chunk_ids": [
+        "storage_guidelines.txt::chunk0"
+      ],
+      "retrieved_chunk_ids": [
+        "storage_guidelines.txt::chunk0",
+        "medication_disposal.txt::chunk0",
+        "medication_expiration.txt::chunk0",
+        "polypharmacy_risks.txt::chunk0",
+        "medication_returns_policy.txt::chunk0"
+      ],
+      "precision@3": 0.3333,
+      "precision@5": 0.2,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0
+    }
+  ]
+}

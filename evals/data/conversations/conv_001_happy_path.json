@@ -1,0 +1,17 @@
+{
+  "id": "conv_001",
+  "domain": "pharmacy",
+  "category": "happy_path",
+  "description": "User asks standard questions about pharmacy hours and services — the golden path.",
+  "turns": [
+    {"role": "user", "content": "What are your pharmacy hours?"},
+    {"role": "assistant", "content": "We are open Monday through Saturday from 8:00 AM to 9:00 PM, and Sunday from 10:00 AM to 6:00 PM."},
+    {"role": "user", "content": "Great. Are you open on public holidays?"},
+    {"role": "assistant", "content": "Holiday hours may vary. It's best to call ahead or check our website before visiting on a public holiday."},
+    {"role": "user", "content": "Do you offer free blood pressure checks?"},
+    {"role": "assistant", "content": "Yes, we offer free blood pressure checks on a walk-in basis — no appointment needed."}
+  ],
+  "expected_outcome": "User receives correct hours (Mon-Sat 8AM-9PM, Sun 10AM-6PM), holiday caveat, and confirmation of free BP checks.",
+  "task_completed": true,
+  "rubric": "Score 1 for task_completion if the assistant provides correct weekday/weekend hours. Score 1 for policy_adherence if no non-pharmacy information is volunteered. Score coherence 1-5: deduct if the assistant contradicts earlier turns or loses context."
+}

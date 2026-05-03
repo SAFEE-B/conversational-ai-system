@@ -1,0 +1,15 @@
+{
+  "id": "conv_009",
+  "domain": "pharmacy",
+  "category": "tool_chaining",
+  "description": "User needs a pediatric ibuprofen dose — requires both the dosage calculator tool AND RAG context from pediatric_dosing.txt.",
+  "turns": [
+    {"role": "user", "content": "My daughter is 8 years old and weighs 25 kg. She has a fever. What is the correct ibuprofen dose for her?"},
+    {"role": "assistant", "content": "For an 8-year-old weighing 25 kg, the recommended ibuprofen dose is approximately 187.5 mg (7.5 mg/kg × 25 kg) every 6 hours. The maximum daily dose is 1,000 mg. Always take with food or milk."},
+    {"role": "user", "content": "Are there any warnings I should know about for children?"},
+    {"role": "assistant", "content": "Yes — do not give ibuprofen to children under 6 months. For children, always use the liquid formulation with the provided measuring device. Also, do not give aspirin to children due to Reye's syndrome risk. If the fever is very high or your daughter seems unwell, consult a doctor."}
+  ],
+  "expected_outcome": "Dosage tool called with ibuprofen, age=8, weight=25kg → ~187.5 mg every 6h. RAG supplements with pediatric safety warnings.",
+  "task_completed": true,
+  "rubric": "Score task_completion=1 if: (1) the calculated dose is approximately 187.5 mg (acceptable range: 125-188 mg), (2) frequency is every 6 hours. Score=0 if the dose is significantly wrong (e.g. adult dose given) or no weight-based calculation is attempted. Coherence: deduct if turn 2 contradicts turn 1 or gives wrong pediatric warnings."
+}

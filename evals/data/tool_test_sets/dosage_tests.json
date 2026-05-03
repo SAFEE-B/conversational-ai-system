@@ -1,0 +1,160 @@
+[
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_001",
+    "utterance": "What is the dose of ibuprofen for a 5-year-old weighing 20 kg?",
+    "expected_tool_call": {
+      "tool_name": "calculate_dosage",
+      "args": {"medication": "ibuprofen", "age_years": 5, "weight_kg": 20}
+    },
+    "expected_result": {
+      "medication": "ibuprofen",
+      "recommended_dose_mg": 150,
+      "frequency": "every 6 hours"
+    },
+    "should_invoke": true,
+    "notes": "Pediatric weight-based: 7.5 mg/kg × 20 kg = 150 mg every 6h."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_002",
+    "utterance": "How much acetaminophen should I take? I'm 35 years old.",
+    "expected_tool_call": {
+      "tool_name": "calculate_dosage",
+      "args": {"medication": "acetaminophen", "age_years": 35}
+    },
+    "expected_result": {
+      "medication": "acetaminophen",
+      "recommended_dose_mg": 500,
+      "frequency": "every 4 hours"
+    },
+    "should_invoke": true,
+    "notes": "Adult (35 > 12) → fixed 500 mg every 4h."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_003",
+    "utterance": "How much Tylenol should I give my 8-year-old who weighs 30 kg?",
+    "expected_tool_call": {
+      "tool_name": "calculate_dosage",
+      "args": {"medication": "acetaminophen", "age_years": 8, "weight_kg": 30}
+    },
+    "expected_result": {
+      "medication": "acetaminophen",
+      "recommended_dose_mg": 375,
+      "frequency": "every 4 hours"
+    },
+    "should_invoke": true,
+    "notes": "Brand synonym 'Tylenol' → acetaminophen. 12.5 mg/kg × 30 kg = 375 mg."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_004",
+    "utterance": "I'm 45 years old. What's the correct dosage of omeprazole?",
+    "expected_tool_call": {
+      "tool_name": "calculate_dosage",
+      "args": {"medication": "omeprazole", "age_years": 45}
+    },
+    "expected_result": {
+      "medication": "omeprazole",
+      "recommended_dose_mg": 20,
+      "frequency": "every 24 hours"
+    },
+    "should_invoke": true,
+    "notes": "Adult → 20 mg once daily."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_005",
+    "utterance": "How many mg of ibuprofen can I take? I'm 28.",
+    "expected_tool_call": {
+      "tool_name": "calculate_dosage",
+      "args": {"medication": "ibuprofen", "age_years": 28}
+    },
+    "expected_result": {
+      "medication": "ibuprofen",
+      "recommended_dose_mg": 400,
+      "frequency": "every 6 hours"
+    },
+    "should_invoke": true,
+    "notes": "'how many mg' + medication + age → dosage. Adult dose 400 mg every 6h."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_006",
+    "utterance": "What is the dose of loratadine for a 3-year-old?",
+    "expected_tool_call": {
+      "tool_name": "calculate_dosage",
+      "args": {"medication": "loratadine", "age_years": 3}
+    },
+    "expected_result": {
+      "medication": "loratadine",
+      "recommended_dose_mg": 10,
+      "frequency": "every 24 hours"
+    },
+    "should_invoke": true,
+    "notes": "Pediatric loratadine: table gives fixed dose (no weight-based), adult_dose_mg used but min_age=2 passes."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_007",
+    "utterance": "What is ibuprofen used for?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Info query (uses/purpose) → get_medication_info, not dosage. No dosage keywords present."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_008",
+    "utterance": "Is ibuprofen safe to take while pregnant?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Safety/pregnancy query → RAG lookup, not dosage calculator."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_009",
+    "utterance": "Do you have loratadine in stock?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Availability/stock question → RAG or plain LLM, not dosage."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_010",
+    "utterance": "What are the side effects of acetaminophen?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Side effects → get_medication_info, not dosage."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_011",
+    "utterance": "What is the aspirin dose for a 10-year-old?",
+    "expected_tool_call": {
+      "tool_name": "calculate_dosage",
+      "args": {"medication": "aspirin", "age_years": 10}
+    },
+    "expected_result": {
+      "error": "not recommended under 18"
+    },
+    "should_invoke": true,
+    "notes": "Tool should be called but return an error — aspirin min_age is 18. Tests graceful error handling."
+  },
+  {
+    "tool": "calculate_dosage",
+    "test_id": "dosage_012",
+    "utterance": "How often should I take cetirizine? I'm 30 years old.",
+    "expected_tool_call": {
+      "tool_name": "calculate_dosage",
+      "args": {"medication": "cetirizine", "age_years": 30}
+    },
+    "expected_result": {
+      "medication": "cetirizine",
+      "recommended_dose_mg": 10,
+      "frequency": "every 24 hours"
+    },
+    "should_invoke": true,
+    "notes": "'how often should I take' + medication + age → dosage. 10mg once daily."
+  }
+]

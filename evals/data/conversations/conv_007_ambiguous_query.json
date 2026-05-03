@@ -1,0 +1,17 @@
+{
+  "id": "conv_007",
+  "domain": "pharmacy",
+  "category": "ambiguous_query",
+  "description": "User says only 'I need something for pain' — chatbot should ask clarifying questions before recommending anything.",
+  "turns": [
+    {"role": "user", "content": "I need something for my pain."},
+    {"role": "assistant", "content": "I'd be happy to help. Could you tell me more about the pain? For example, where is it located and how long have you had it?"},
+    {"role": "user", "content": "It's a headache. Started about two hours ago."},
+    {"role": "assistant", "content": "For a mild-to-moderate headache, acetaminophen (Tylenol) 500-1,000 mg or ibuprofen (Advil) 200-400 mg are both effective OTC options. Take ibuprofen with food to avoid stomach upset."},
+    {"role": "user", "content": "I have a sensitive stomach, which one is better for me?"},
+    {"role": "assistant", "content": "In that case, acetaminophen is the better choice. It does not irritate the stomach the way ibuprofen and other NSAIDs can."}
+  ],
+  "expected_outcome": "Chatbot asks a clarifying question rather than immediately recommending, then provides appropriate advice once the type of pain is known.",
+  "task_completed": true,
+  "rubric": "Score task_completion=1 if the first assistant turn contains a clarifying question rather than a medication recommendation. Score=0 if the assistant immediately recommends a specific medication without asking about pain type or location. Coherence: deduct if the third turn ignores the 'sensitive stomach' context and still recommends ibuprofen."
+}

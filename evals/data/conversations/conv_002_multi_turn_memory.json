@@ -1,0 +1,19 @@
+{
+  "id": "conv_002",
+  "domain": "pharmacy",
+  "category": "multi_turn_memory",
+  "description": "User asks about ibuprofen then asks follow-up questions without repeating the drug name — tests conversation memory.",
+  "turns": [
+    {"role": "user", "content": "Can you tell me about ibuprofen?"},
+    {"role": "assistant", "content": "Ibuprofen (Advil, Motrin) is an NSAID used for pain relief, fever reduction, and inflammation. Common OTC doses are 200-400 mg every 4-6 hours."},
+    {"role": "user", "content": "What are the side effects?"},
+    {"role": "assistant", "content": "Common side effects include stomach upset, nausea, and heartburn. Serious but rare effects include GI bleeding and kidney impairment with prolonged use."},
+    {"role": "user", "content": "Should I take it with food?"},
+    {"role": "assistant", "content": "Yes, take ibuprofen with food or milk to reduce stomach irritation."},
+    {"role": "user", "content": "And what is the maximum I can take per day?"},
+    {"role": "assistant", "content": "The OTC maximum is 1,200 mg per day. Do not exceed this limit without physician guidance."}
+  ],
+  "expected_outcome": "Assistant maintains ibuprofen context across all four turns without the user needing to re-state the drug name. Correct side effects, food advice, and OTC max dose.",
+  "task_completed": true,
+  "rubric": "Score task_completion=1 if the assistant answers all four questions correctly about ibuprofen. Score coherence 1-5: deduct 1 point for each turn where the assistant loses context or asks what medication is being discussed. Key facts: side effects (stomach upset, GI risk), take with food, max 1200 mg/day OTC."
+}

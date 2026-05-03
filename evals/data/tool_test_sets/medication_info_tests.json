@@ -1,0 +1,169 @@
+[
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_001",
+    "utterance": "What is omeprazole used for?",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "omeprazole"}
+    },
+    "expected_result": {
+      "found": true,
+      "medication_name": "omeprazole",
+      "category": "Proton Pump Inhibitor (PPI)"
+    },
+    "should_invoke": true,
+    "notes": "Classic 'what is X used for' pattern → medication info."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_002",
+    "utterance": "Tell me about loratadine.",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "loratadine"}
+    },
+    "expected_result": {
+      "found": true,
+      "medication_name": "loratadine"
+    },
+    "should_invoke": true,
+    "notes": "'tell me about' pattern + known medication name."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_003",
+    "utterance": "What are the side effects of diphenhydramine?",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "diphenhydramine"}
+    },
+    "expected_result": {
+      "found": true,
+      "side_effects": {"common": ["Drowsiness (significant)"]}
+    },
+    "should_invoke": true,
+    "notes": "'side effects' pattern + known drug."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_004",
+    "utterance": "What does cetirizine do?",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "cetirizine"}
+    },
+    "expected_result": {
+      "found": true,
+      "category": "Second-generation antihistamine"
+    },
+    "should_invoke": true,
+    "notes": "'what does X do' pattern."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_005",
+    "utterance": "Is aspirin safe for children?",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "aspirin"}
+    },
+    "expected_result": {
+      "found": true,
+      "key_warnings": ["NEVER give to children or teenagers"]
+    },
+    "should_invoke": true,
+    "notes": "Single medication + safety/use context → info lookup. Expected warning: no aspirin for children (Reye's)."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_006",
+    "utterance": "What is Benadryl used for?",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "benadryl"}
+    },
+    "expected_result": {
+      "found": true,
+      "medication_name": "benadryl"
+    },
+    "should_invoke": true,
+    "notes": "Brand name 'Benadryl' → should map to diphenhydramine. Tests brand-name synonym handling."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_007",
+    "utterance": "Tell me about Tylenol.",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "tylenol"}
+    },
+    "expected_result": {
+      "found": true,
+      "medication_name": "tylenol"
+    },
+    "should_invoke": true,
+    "notes": "Brand synonym Tylenol → acetaminophen. 'tell me about' pattern."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_008",
+    "utterance": "What are the warnings for melatonin?",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "melatonin"}
+    },
+    "expected_result": {
+      "found": true,
+      "key_warnings": ["Start with lowest effective dose (0.5-1 mg)"]
+    },
+    "should_invoke": true,
+    "notes": "'what are the warnings' + medication → info lookup."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_009",
+    "utterance": "Can I take ibuprofen and aspirin together?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Two medications + 'together' → should trigger check_drug_interaction, not get_medication_info."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_010",
+    "utterance": "How much melatonin should I take? I'm 30 years old.",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Dosage query with age → should trigger calculate_dosage, not medication info. Dosage patterns have higher specificity."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_011",
+    "utterance": "What is clotrimazole used for?",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "clotrimazole"}
+    },
+    "expected_result": {
+      "found": true,
+      "category": "Topical antifungal"
+    },
+    "should_invoke": true,
+    "notes": "'what is X used for' + known drug."
+  },
+  {
+    "tool": "get_medication_info",
+    "test_id": "medinfo_012",
+    "utterance": "I want to learn about hydrocortisone cream.",
+    "expected_tool_call": {
+      "tool_name": "get_medication_info",
+      "args": {"medication_name": "hydrocortisone"}
+    },
+    "expected_result": {
+      "found": true,
+      "category": "Topical corticosteroid (low potency)"
+    },
+    "should_invoke": true,
+    "notes": "'learn about' pattern + known medication."
+  }
+]

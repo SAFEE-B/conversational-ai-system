@@ -1,0 +1,17 @@
+{
+  "id": "conv_004",
+  "domain": "pharmacy",
+  "category": "rag_dependent",
+  "description": "User asks about medication disposal — answer only available in the RAG documents, not in tool databases.",
+  "turns": [
+    {"role": "user", "content": "How should I dispose of my old medications safely?"},
+    {"role": "assistant", "content": "The safest method is a DEA-authorized drug take-back program. HealthFirst may have an in-store collection kiosk — ask our staff. DEA Take-Back Day events are held twice yearly."},
+    {"role": "user", "content": "What if there is no take-back program available near me?"},
+    {"role": "assistant", "content": "If no take-back is available, mix the medication with an undesirable material like coffee grounds or kitty litter, seal it in a bag or container, and throw it in the household trash. Do not flush unless the medication is on the FDA Flush List (certain high-risk opioids)."},
+    {"role": "user", "content": "Can I just flush all my old pills down the toilet?"},
+    {"role": "assistant", "content": "Generally no — flushing is only recommended for a small list of high-risk medications (like certain opioids) on the FDA Flush List. For most medications, the trash method or take-back program is preferred to avoid contaminating water supplies."}
+  ],
+  "expected_outcome": "All three answers are grounded in the medication disposal document. No hallucinated disposal instructions.",
+  "task_completed": true,
+  "rubric": "Score task_completion=1 if the assistant correctly describes the take-back program as the best option AND the coffee-grounds/kitty-litter trash method for when take-back is unavailable. Score=0 if the assistant invents disposal methods not in the documents. Deduct coherence points for any factually wrong statement (e.g. saying all medications can be flushed)."
+}

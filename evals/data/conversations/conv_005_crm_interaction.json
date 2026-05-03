@@ -1,0 +1,17 @@
+{
+  "id": "conv_005",
+  "domain": "pharmacy",
+  "category": "crm_interaction",
+  "description": "User introduces themselves by name — CRM record should be created and recalled in the same session.",
+  "turns": [
+    {"role": "user", "content": "Hi, my name is Sarah Ahmed."},
+    {"role": "assistant", "content": "Nice to meet you, Sarah! How can I help you at HealthFirst Community Pharmacy today?"},
+    {"role": "user", "content": "I was wondering about my allergy medication. I usually take cetirizine."},
+    {"role": "assistant", "content": "Cetirizine (Zyrtec) is a second-generation antihistamine for seasonal and year-round allergies. The standard adult dose is 10 mg once daily. It may cause mild drowsiness, so some people prefer to take it at bedtime."},
+    {"role": "user", "content": "Do you remember my name?"},
+    {"role": "assistant", "content": "Yes, you are Sarah Ahmed. Is there anything else I can help you with?"}
+  ],
+  "expected_outcome": "CRM tool invoked on first turn; name stored and recalled correctly in the third turn.",
+  "task_completed": true,
+  "rubric": "Score task_completion=1 if the assistant: (1) uses 'Sarah' in its response to the first turn, and (2) correctly states 'Sarah Ahmed' when asked. Score=0 if the assistant fails to greet by name or gives a wrong name. Score coherence 1-5: deduct if the assistant says it cannot remember names or contradicts the stored name."
+}

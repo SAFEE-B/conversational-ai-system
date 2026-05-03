@@ -1,0 +1,150 @@
+[
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_001",
+    "utterance": "Is it safe to take warfarin and aspirin together?",
+    "expected_tool_call": {
+      "tool_name": "check_drug_interaction",
+      "args": {"drug1": "warfarin", "drug2": "aspirin"}
+    },
+    "expected_result": {
+      "severity": "major",
+      "drug1": "warfarin",
+      "drug2": "aspirin"
+    },
+    "should_invoke": true,
+    "notes": "Classic major interaction. Both drugs in medication names list + 'safe to take' + 'together'."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_002",
+    "utterance": "Can I mix ibuprofen and naproxen?",
+    "expected_tool_call": {
+      "tool_name": "check_drug_interaction",
+      "args": {"drug1": "ibuprofen", "drug2": "naproxen"}
+    },
+    "expected_result": {
+      "severity": "major",
+      "drug1": "ibuprofen",
+      "drug2": "naproxen"
+    },
+    "should_invoke": true,
+    "notes": "Two NSAIDs — major interaction. 'mix' keyword triggers interaction pattern."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_003",
+    "utterance": "What happens if I take acetaminophen and warfarin at the same time?",
+    "expected_tool_call": {
+      "tool_name": "check_drug_interaction",
+      "args": {"drug1": "acetaminophen", "drug2": "warfarin"}
+    },
+    "expected_result": {
+      "severity": "moderate"
+    },
+    "should_invoke": true,
+    "notes": "'take together' + 2 known medications → interaction check. Expected: moderate."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_004",
+    "utterance": "I'm on metronidazole. Can I drink alcohol?",
+    "expected_tool_call": {
+      "tool_name": "check_drug_interaction",
+      "args": {"drug1": "metronidazole", "drug2": "alcohol"}
+    },
+    "expected_result": {
+      "severity": "major"
+    },
+    "should_invoke": true,
+    "notes": "'interact' + metronidazole + alcohol (not a standard med name but should be detected via context). Major interaction — disulfiram-like reaction."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_005",
+    "utterance": "Is omeprazole safe to take with clopidogrel?",
+    "expected_tool_call": {
+      "tool_name": "check_drug_interaction",
+      "args": {"drug1": "omeprazole", "drug2": "clopidogrel"}
+    },
+    "expected_result": {
+      "severity": "major"
+    },
+    "should_invoke": true,
+    "notes": "'safe to take' + 2 known drugs → interaction. Major: omeprazole inhibits clopidogrel activation."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_006",
+    "utterance": "Can I take ibuprofen with warfarin? I need pain relief.",
+    "expected_tool_call": {
+      "tool_name": "check_drug_interaction",
+      "args": {"drug1": "ibuprofen", "drug2": "warfarin"}
+    },
+    "expected_result": {
+      "severity": "major"
+    },
+    "should_invoke": true,
+    "notes": "'can i take' + 'and' + 2 known drugs → interaction. Major."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_007",
+    "utterance": "What is the dosage for aspirin in adults?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Dosage query for a single drug — should invoke calculate_dosage, not interaction."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_008",
+    "utterance": "Tell me everything about warfarin.",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Single drug info query — should invoke get_medication_info, not interaction (only 1 drug mentioned)."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_009",
+    "utterance": "Can I take aspirin for a headache?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: This is a dosage/usage question for a single drug, not a drug-drug interaction query."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_010",
+    "utterance": "What are the side effects of taking ibuprofen?",
+    "expected_tool_call": null,
+    "should_invoke": false,
+    "notes": "NEGATIVE: Single drug side effects → get_medication_info, not interaction checker."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_011",
+    "utterance": "I take both diphenhydramine and alcohol. Is that okay?",
+    "expected_tool_call": {
+      "tool_name": "check_drug_interaction",
+      "args": {"drug1": "diphenhydramine", "drug2": "alcohol"}
+    },
+    "expected_result": {
+      "severity": "major"
+    },
+    "should_invoke": true,
+    "notes": "'take together' + diphenhydramine + alcohol → major CNS depression interaction."
+  },
+  {
+    "tool": "check_drug_interaction",
+    "test_id": "interaction_012",
+    "utterance": "Is melatonin safe to combine with warfarin?",
+    "expected_tool_call": {
+      "tool_name": "check_drug_interaction",
+      "args": {"drug1": "melatonin", "drug2": "warfarin"}
+    },
+    "expected_result": {
+      "severity": "moderate"
+    },
+    "should_invoke": true,
+    "notes": "'combine' + 2 known drugs → interaction. Expected: moderate."
+  }
+]

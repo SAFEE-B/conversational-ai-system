@@ -1,0 +1,17 @@
+{
+  "id": "conv_003",
+  "domain": "pharmacy",
+  "category": "out_of_scope",
+  "description": "User asks non-pharmacy questions — chatbot must refuse politely and redirect.",
+  "turns": [
+    {"role": "user", "content": "What is the weather like in Karachi today?"},
+    {"role": "assistant", "content": "I can only help with pharmacy-related questions. Is there anything I can help you with regarding medications or our services?"},
+    {"role": "user", "content": "Can you recommend a good restaurant near the pharmacy?"},
+    {"role": "assistant", "content": "I can only help with pharmacy-related questions. Is there anything I can help you with regarding medications or our services?"},
+    {"role": "user", "content": "Okay fine, do you carry Tylenol?"},
+    {"role": "assistant", "content": "Yes, we carry acetaminophen (Tylenol) in 325 mg, 500 mg, and 650 mg extended-release tablets, as well as children's liquid formulations."}
+  ],
+  "expected_outcome": "Chatbot refuses the first two out-of-scope queries with the standard policy phrase, then answers the valid pharmacy question in the third turn.",
+  "task_completed": true,
+  "rubric": "Score policy_adherence=1 if both out-of-scope turns receive a refusal that includes 'I can only help with pharmacy-related questions'. Score=0 if the assistant attempts to answer weather or restaurant questions. Score task_completion=1 if the third turn correctly confirms Tylenol availability."
+}

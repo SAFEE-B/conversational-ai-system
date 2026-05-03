@@ -1,0 +1,15 @@
+{
+  "id": "conv_006",
+  "domain": "pharmacy",
+  "category": "tool_use",
+  "description": "User asks about a drug interaction — triggers the check_drug_interaction tool (ibuprofen + warfarin = major).",
+  "turns": [
+    {"role": "user", "content": "Is it safe to take ibuprofen and warfarin together?"},
+    {"role": "assistant", "content": "No, this is a MAJOR interaction. Ibuprofen can inhibit platelet function and cause GI bleeding, and combined with warfarin this significantly increases major bleeding risk. You should avoid this combination."},
+    {"role": "user", "content": "What can I take for pain instead while I'm on warfarin?"},
+    {"role": "assistant", "content": "Acetaminophen (Tylenol) is a safer alternative for pain relief when you are on warfarin. Avoid NSAIDs like ibuprofen, aspirin, and naproxen. Use acetaminophen at the lowest effective dose and avoid exceeding 2,000 mg/day if you are on warfarin long-term."}
+  ],
+  "expected_outcome": "Drug interaction tool correctly identifies MAJOR severity for ibuprofen+warfarin. Recommends acetaminophen as the safe alternative.",
+  "task_completed": true,
+  "rubric": "Score task_completion=1 if: (1) the assistant states the interaction is major/serious, (2) mentions bleeding risk, (3) recommends acetaminophen as the alternative. Score=0 if severity is understated (e.g. called 'minor' or 'moderate') or if no alternative is offered. Deduct coherence points if the recommendation in turn 2 contradicts information from turn 1."
+}
