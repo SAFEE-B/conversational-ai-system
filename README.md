@@ -29,56 +29,112 @@ This chatbot acts as a first-line virtual assistant available 24/7, handling hig
 ## Architecture Overview
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                          Browser Client                              │
-│                    (HTML + Vanilla JS + CSS)                          │
-│                                                                      │
-│  • ChatGPT-style UI          • Session sidebar (localStorage)        │
-│  • Streaming token render    • Voice input/output (ASR / TTS)        │
-└───────────────────────────────┬──────────────────────────────────────┘
-                                │  WebSocket  ws://localhost:8000/ws/chat
-                                │  REST       /sessions  /history/{id}
-                                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│                         FastAPI Backend                              │
-│                      (uvicorn · async · Docker)                      │
-│                                                                      │
-│   /ws/chat ──► ConversationManager ──► _enrich_message()            │
-│                                              │                       │
-│                              ┌───────────────┴──────────────┐        │
-│                              ▼                              ▼        │
-│                    ┌──────────────────┐   ┌──────────────────────┐  │
-│                    │  RAG Retriever   │   │  Tool Orchestrator   │  │
-│                    │  (concurrent)    │   │  (concurrent)        │  │
-│                    └────────┬─────────┘   └──────────┬───────────┘  │
-│                             │                        │              │
-│                             └──────────┬─────────────┘              │
-│                                        ▼                            │
-│                            build_augmented_messages()               │
-│                                        │                            │
-│                                        ▼                            │
-│                              LLMEngine.stream_chat()                │
-└──────────────────────────────────────────────────────────────────────┘
-                                         │
-               ┌─────────────────────────┴──────────────────────────┐
-               ▼                                                     ▼
-┌──────────────────────────┐                          ┌─────────────────────────┐
-│    DocumentRetriever     │                          │    ToolOrchestrator     │
-│                          │                          │                         │
-│ • all-MiniLM-L6-v2 embed │                          │ • Intent detection      │
-│ • ChromaDB cosine search │                          │ • CRM Tool (SQLite)     │
-│ • Top-3 chunk retrieval  │                          │ • Drug Interaction      │
-│ • LRU query cache        │                          │ • Dosage Calculator     │
-└──────────────────────────┘                          │ • Medication Info       │
-                                                      └─────────────────────────┘
-                                         │
-                                         ▼
-                          ┌──────────────────────────────┐
-                          │  Qwen2.5-0.5B-Instruct        │
-                          │  Q4_K_M GGUF  (~400 MB)       │
-                          │  CPU-only · llama-cpp-python   │
-                          └──────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│                            Browser Client                                │
+│                      (HTML + Vanilla JS + CSS)                           │
+│                                                                          │
+│  • ChatGPT-style streaming UI    • Session sidebar (localStorage)        │
+│  • Voice input (microphone)      • Voice output (audio playback)         │
+└────────────┬─────────────────────────────────────────────┬───────────────┘
+             │  WebSocket  ws://localhost:8000/ws/chat      │  REST
+             │  {"type":"message", "content":"..."}         │  GET  /sessions
+             │  {"type":"voice",   "audio_base64":"..."}    │  GET  /history/{id}
+             ▼                                             ▼
+┌──────────────────────────────────────────────────────────────────────────┐
+│                           FastAPI Backend                                │
+│                        (uvicorn · asyncio · Docker)                      │
+│                                                                          │
+│  ┌─ voice message? ──────────────────────────────────────────────────┐   │
+│  │  Vosk ASR (local, CPU)  →  transcript text                        │   │
+│  └───────────────────────────────────────────────────────────────────┘   │
+│                │  text (typed or transcribed)                            │
+│                ▼                                                         │
+│  ConversationManager.add_user_message()                                  │
+│    • append to session store                                             │
+│    • _prune_history(): keep system prompt + last 10 turns                │
+│                │                                                         │
+│                ▼                                                         │
+│  _enrich_message()  ←  asyncio.gather() — both run concurrently         │
+│    │                                                                     │
+│    ├── RAG Retriever (DocumentRetriever)                                 │
+│    │     embed query with all-MiniLM-L6-v2                              │
+│    │     cosine search in ChromaDB → top-3 chunks                       │
+│    │     → format as RAG context block                                   │
+│    │                                                                     │
+│    └── Tool Orchestrator                                                 │
+│          keyword / regex intent detection  ← NOT LLM-driven             │
+│          → CRM Tool        (SQLite / aiosqlite)                          │
+│          → Drug Interaction (local interaction DB)                       │
+│          → Dosage Calculator (weight/age-based dosing tables)            │
+│          → Med Info Lookup  (local OTC medication DB)                    │
+│          → format as tool result block                                   │
+│                │                                                         │
+│                │  both complete BEFORE LLM starts                        │
+│                ▼                                                         │
+│  build_augmented_messages()  — assemble LLM input:                       │
+│  ┌─────────────────────────────────────────────────────────────────┐     │
+│  │  [system]    SYSTEM PROMPT (role · rules · hours · constraints) │     │
+│  │  [user]      older turn 1   ─┐                                  │     │
+│  │  [assistant] older reply 1   ├─ SNR-filtered conversation       │     │
+│  │  [user]      older turn 2   ─┘  history (last 10 turns)         │     │
+│  │  [system]    RAG context block   ← injected before user msg     │     │
+│  │  [system]    Tool result block   ← injected before user msg     │     │
+│  │  [user]      current user message                               │     │
+│  └─────────────────────────────────────────────────────────────────┘     │
+│                │                                                         │
+│                ▼                                                         │
+│  LLMEngine.stream_chat()                                                 │
+│    asyncio.Lock  — serializes requests; one generation at a time         │
+│    ThreadPoolExecutor(max_workers=1) → asyncio.Queue → token stream      │
+│  ┌─────────────────────────────────────────────────────────────────┐     │
+│  │  Qwen2.5-0.5B-Instruct  ·  Q4_K_M GGUF  (~400 MB)              │     │
+│  │  CPU-only · llama-cpp-python                                    │     │
+│  │  n_ctx = 4096  ·  temperature = 0.7  ·  max_tokens = 512        │     │
+│  │                                                                 │     │
+│  │  INPUT : system prompt + history + RAG chunks + tool result     │     │
+│  │  OUTPUT: natural language response (token-by-token stream)      │     │
+│  │                                                                 │     │
+│  │  ROLE  : response generation ONLY                               │     │
+│  │          — does NOT select tools (that is keyword/regex)        │     │
+│  │          — does NOT retrieve documents (that is ChromaDB)       │     │
+│  │          — grounds answer in injected context                   │     │
+│  └─────────────────────────────────────────────────────────────────┘     │
+│                │  token stream                                           │
+│                ▼                                                         │
+│  WebSocket send:                                                         │
+│    {"type":"tool_used", "tool":"..."}  (if a tool was called)            │
+│    {"type":"token",     "content":"..."} × N  (streamed tokens)          │
+│    {"type":"end"}                                                        │
+│                │                                                         │
+│  ┌─ voice message? ──────────────────────────────────────────────────┐   │
+│  │  Piper TTS (local, CPU)  →  audio_chunk × N  →  WebSocket        │   │
+│  └───────────────────────────────────────────────────────────────────┘   │
+│                ▼                                                         │
+│  ConversationManager.add_assistant_message()                             │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
+
+### LLM's Role in the Architecture
+
+The LLM — `Qwen2.5-0.5B-Instruct` running locally via `llama-cpp-python` — is **the last step** in every request. Its sole responsibility is to read a fully pre-assembled context and generate a fluent, grounded reply. It does **nothing else**:
+
+| What the LLM does | What the LLM does NOT do |
+|---|---|
+| Reads system prompt + conversation history | Select or call tools |
+| Reads injected RAG chunks (pharmacy documents) | Query ChromaDB or embed text |
+| Reads formatted tool result (if a tool ran) | Detect user intent |
+| Generates natural-language response token-by-token | Route requests or manage sessions |
+
+**Why this separation matters:** A 0.5B model cannot reliably do function calling or chain-of-thought tool routing. All structured logic (intent detection, retrieval, tool execution) is handled deterministically in Python *before* the LLM is invoked. The LLM sees only a clean, complete context and focuses entirely on phrasing the response.
+
+**Serialization:** `LLMEngine` holds a single `asyncio.Lock` and a `ThreadPoolExecutor` with `max_workers=1`. Concurrent WebSocket clients queue behind this lock — the model processes one request at a time on CPU. This is the primary concurrency bottleneck under heavy load.
+
+**Context budget per call:**
+- Context window: 4 096 tokens
+- Max response: 512 tokens
+- History: last 10 turns (older filler turns SNR-filtered)
+- RAG chunks: top 3 (≈150–300 tokens)
+- Tool result: ≈50–100 tokens
 
 ---
 
@@ -172,7 +228,7 @@ On every message:
 
 All four tools are called **before** LLM generation begins. Results are injected into the prompt as context, preserving token-by-token streaming.
 
-### Tool 1 — CRM Tool *(Mandatory)*
+### Tool 1 — CRM Tool
 
 Stores and retrieves patient information across sessions using a persistent SQLite database.
 
@@ -262,35 +318,59 @@ User:  "What are the side effects of omeprazole?"
 ## Conversation Flow Design
 
 ```
-User message received
+User message received (text or voice)
         │
+        │  voice? → Vosk ASR → transcript
         ▼
 ConversationManager.add_user_message()
+  • append raw message to session store
+  • _prune_history(): system prompt + last 10 turns kept
         │
         ▼
-_enrich_message() — concurrent asyncio.gather()
-  ├── RAG: embed query → ChromaDB top-3 chunks → format context block
-  └── Tool: detect intent (regex/keyword) → call tool → format result
+_enrich_message() — asyncio.gather() runs both concurrently
+  ├── RAG:  embed query (all-MiniLM-L6-v2)
+  │         → ChromaDB cosine search → top-3 chunks
+  │         → formatted context block
+  │
+  └── Tool: keyword/regex intent detection  ← NOT the LLM
+            → execute matched tool (CRM / DrugInteraction /
+              DosageCalc / MedInfo)
+            → formatted tool result block
         │
+        │  both paths complete; LLM has not started yet
         ▼
 build_augmented_messages()
-  └── Inject [RAG context + tool result] before last user message
+  Assembles the exact message list the LLM will see:
+  ┌────────────────────────────────────────────────────┐
+  │ [system]    system prompt                          │
+  │ [user]      …                ┐                    │
+  │ [assistant] …                ├ SNR-filtered        │
+  │ [user]      …                ┘ history             │
+  │ [system]    RAG context block   ← new              │
+  │ [system]    tool result block   ← new              │
+  │ [user]      current message                        │
+  └────────────────────────────────────────────────────┘
         │
         ▼
 LLMEngine.stream_chat(augmented_messages)
-  └── ThreadPoolExecutor → asyncio.Queue → token stream
+  asyncio.Lock: only one generation runs at a time
+  ThreadPoolExecutor(1) → asyncio.Queue → async token generator
+
+  The LLM's sole job: read the assembled context above
+  and generate a grounded natural-language reply.
+  It does NOT call tools, does NOT query ChromaDB.
         │
         ▼
 WebSocket: {"type":"tool_used", "tool":"..."} (if tool was called)
-           {"type":"start"}
-           {"type":"token", "content":"..."} × N
+           {"type":"token", "content":"..."} × N  (streamed)
            {"type":"end"}
         │
+        │  voice? → each sentence → Piper TTS → audio_chunk
         ▼
 ConversationManager.add_assistant_message()
 ```
 
-**Key design principle:** RAG retrieval and tool calls both complete *before* the LLM starts generating. The LLM receives one enriched prompt and streams a single response — no multi-pass or interrupted streaming.
+**Key design principle:** RAG retrieval and tool calls both complete *before* the LLM starts generating. The LLM receives one enriched, pre-assembled prompt and streams a single response — no multi-pass, no interrupted streaming, no LLM-driven tool selection.
 
 ---
 
