@@ -3,8 +3,25 @@ import logging
 import asyncio
 import base64
 import os
+import sys
 from contextlib import asynccontextmanager
 from concurrent.futures import ThreadPoolExecutor
+
+# Add CUDA 12 DLLs to PATH for llama-cpp-python on Windows
+site_packages = next((p for p in sys.path if 'site-packages' in p), None)
+if site_packages:
+    cuda_bin = os.path.join(site_packages, 'nvidia', 'cuda_runtime', 'bin')
+    cublas_bin = os.path.join(site_packages, 'nvidia', 'cublas', 'bin')
+    nvrtc_bin = os.path.join(site_packages, 'nvidia', 'cuda_nvrtc', 'bin')
+    
+    for bin_path in [cuda_bin, cublas_bin, nvrtc_bin]:
+        if os.path.exists(bin_path):
+            os.environ['PATH'] = bin_path + os.pathsep + os.environ.get('PATH', '')
+            if hasattr(os, 'add_dll_directory'):
+                try:
+                    os.add_dll_directory(bin_path)
+                except Exception:
+                    pass
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -38,7 +55,7 @@ _CRM_DB_PATH = os.environ.get("CRM_DB_PATH", os.path.join(_BASE_DIR, "..", "crm.
 async def lifespan(app: FastAPI):
     global llm_engine, conversation_manager, asr_engine, tts_engine, retriever, orchestrator
 
-    model_path = os.environ.get("MODEL_PATH", "models/qwen2.5-0.5b-instruct-q4_k_m.gguf")
+    model_path = os.environ.get("MODEL_PATH", "models/qwen2.5-3b-instruct-q4_k_m.gguf")
     try:
         llm_engine = LLMEngine(model_path=model_path)
         logger.info("LLM Engine initialized successfully.")

@@ -1,0 +1,213 @@
+{
+  "scenario": "mixed",
+  "message": "My daughter is 6 years old and weighs 22 kg. What is the correct ibuprofen dose for her fever?",
+  "n_trials": 30,
+  "n_successful": 30,
+  "n_errors": 0,
+  "ttft": {
+    "mean": 0.0452,
+    "median": 0.0322,
+    "p90": 0.036,
+    "p99": 0.4185,
+    "min": 0.028,
+    "max": 0.4185
+  },
+  "inter_token": {
+    "mean": 0.0112,
+    "median": 0.0113,
+    "p90": 0.0119,
+    "p99": 0.0124,
+    "min": 0.0094,
+    "max": 0.0124
+  },
+  "e2e": {
+    "mean": 0.8815,
+    "median": 0.8657,
+    "p90": 1.1265,
+    "p99": 1.3604,
+    "min": 0.5289,
+    "max": 1.3604
+  },
+  "raw_samples": [
+    {
+      "ttft": 0.4185,
+      "inter_token": 0.0094,
+      "e2e": 1.3604,
+      "n_tokens": 101
+    },
+    {
+      "ttft": 0.028,
+      "inter_token": 0.0107,
+      "e2e": 1.0237,
+      "n_tokens": 94
+    },
+    {
+      "ttft": 0.0345,
+      "inter_token": 0.0115,
+      "e2e": 0.5289,
+      "n_tokens": 44
+    },
+    {
+      "ttft": 0.0337,
+      "inter_token": 0.0112,
+      "e2e": 0.6611,
+      "n_tokens": 57
+    },
+    {
+      "ttft": 0.0282,
+      "inter_token": 0.0124,
+      "e2e": 0.6586,
+      "n_tokens": 52
+    },
+    {
+      "ttft": 0.0348,
+      "inter_token": 0.0108,
+      "e2e": 0.8519,
+      "n_tokens": 77
+    },
+    {
+      "ttft": 0.0306,
+      "inter_token": 0.0117,
+      "e2e": 0.7786,
+      "n_tokens": 65
+    },
+    {
+      "ttft": 0.036,
+      "inter_token": 0.0118,
+      "e2e": 0.8031,
+      "n_tokens": 66
+    },
+    {
+      "ttft": 0.0329,
+      "inter_token": 0.0109,
+      "e2e": 1.0531,
+      "n_tokens": 95
+    },
+    {
+      "ttft": 0.032,
+      "inter_token": 0.0114,
+      "e2e": 0.8903,
+      "n_tokens": 76
+    },
+    {
+      "ttft": 0.0347,
+      "inter_token": 0.0112,
+      "e2e": 0.7411,
+      "n_tokens": 64
+    },
+    {
+      "ttft": 0.0333,
+      "inter_token": 0.0106,
+      "e2e": 1.1265,
+      "n_tokens": 104
+    },
+    {
+      "ttft": 0.0352,
+      "inter_token": 0.0108,
+      "e2e": 1.1826,
+      "n_tokens": 107
+    },
+    {
+      "ttft": 0.032,
+      "inter_token": 0.0118,
+      "e2e": 0.707,
+      "n_tokens": 58
+    },
+    {
+      "ttft": 0.0282,
+      "inter_token": 0.0114,
+      "e2e": 0.8795,
+      "n_tokens": 76
+    },
+    {
+      "ttft": 0.034,
+      "inter_token": 0.0106,
+      "e2e": 0.7456,
+      "n_tokens": 68
+    },
+    {
+      "ttft": 0.0339,
+      "inter_token": 0.0107,
+      "e2e": 0.8023,
+      "n_tokens": 73
+    },
+    {
+      "ttft": 0.0312,
+      "inter_token": 0.0115,
+      "e2e": 0.9283,
+      "n_tokens": 79
+    },
+    {
+      "ttft": 0.0337,
+      "inter_token": 0.0105,
+      "e2e": 0.9998,
+      "n_tokens": 93
+    },
+    {
+      "ttft": 0.0308,
+      "inter_token": 0.0114,
+      "e2e": 0.9347,
+      "n_tokens": 80
+    },
+    {
+      "ttft": 0.0322,
+      "inter_token": 0.011,
+      "e2e": 1.0119,
+      "n_tokens": 90
+    },
+    {
+      "ttft": 0.0289,
+      "inter_token": 0.0114,
+      "e2e": 0.7896,
+      "n_tokens": 68
+    },
+    {
+      "ttft": 0.0322,
+      "inter_token": 0.0114,
+      "e2e": 0.7254,
+      "n_tokens": 62
+    },
+    {
+      "ttft": 0.0341,
+      "inter_token": 0.0111,
+      "e2e": 0.9973,
+      "n_tokens": 88
+    },
+    {
+      "ttft": 0.0316,
+      "inter_token": 0.0107,
+      "e2e": 0.9122,
+      "n_tokens": 83
+    },
+    {
+      "ttft": 0.0366,
+      "inter_token": 0.011,
+      "e2e": 1.1229,
+      "n_tokens": 100
+    },
+    {
+      "ttft": 0.03,
+      "inter_token": 0.0121,
+      "e2e": 0.7918,
+      "n_tokens": 64
+    },
+    {
+      "ttft": 0.0288,
+      "inter_token": 0.0118,
+      "e2e": 0.775,
+      "n_tokens": 64
+    },
+    {
+      "ttft": 0.032,
+      "inter_token": 0.0115,
+      "e2e": 0.8805,
+      "n_tokens": 75
+    },
+    {
+      "ttft": 0.0321,
+      "inter_token": 0.0119,
+      "e2e": 0.7813,
+      "n_tokens": 64
+    }
+  ]
+}

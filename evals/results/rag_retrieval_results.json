@@ -48,8 +48,8 @@
       "query_id": "rag_003",
       "query": "What clinical services does HealthFirst Community Pharmacy offer?",
       "relevant_chunk_ids": [
-        "pharmacy_hours_services.txt::chunk0",
-        "medication_counseling.txt::chunk0"
+        "medication_counseling.txt::chunk0",
+        "pharmacy_hours_services.txt::chunk0"
       ],
       "retrieved_chunk_ids": [
         "pharmacy_hours_services.txt::chunk0",
@@ -68,8 +68,8 @@
       "query_id": "rag_004",
       "query": "What is the recommended OTC dose of ibuprofen for adults?",
       "relevant_chunk_ids": [
-        "pain_management.txt::chunk0",
-        "ibuprofen_guide.txt::chunk0"
+        "ibuprofen_guide.txt::chunk0",
+        "pain_management.txt::chunk0"
       ],
       "retrieved_chunk_ids": [
         "ibuprofen_guide.txt::chunk0",

@@ -1,0 +1,107 @@
+{
+  "tp": 10,
+  "fp": 0,
+  "fn": 0,
+  "tn": 2,
+  "tpr": 1.0,
+  "fpr": 0.0,
+  "per_case": [
+    {
+      "test_id": "medinfo_001",
+      "utterance": "What is omeprazole used for?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Omeprazole is used for frequent heartburn (2+ days/week) and acid reflux symptoms."
+    },
+    {
+      "test_id": "medinfo_002",
+      "utterance": "Tell me about loratadine.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Loratadine is a second-generation antihistamine that provides 24-hour allergy relief with minimal sedation. It's available as Claritin and Alavert. Us"
+    },
+    {
+      "test_id": "medinfo_003",
+      "utterance": "What are the side effects of diphenhydramine?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "The side effects of diphenhydramine (like Benadryl) can include drowsiness (especially significant), dry mouth, blurred vision, and urinary retention."
+    },
+    {
+      "test_id": "medinfo_004",
+      "utterance": "What does cetirizine do?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Cetirizine provides 24-hour relief for allergies and hives."
+    },
+    {
+      "test_id": "medinfo_005",
+      "utterance": "Is aspirin safe for children?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "No, aspirin is not safe for children or teenagers. It increases the risk of Reye's syndrome. For children, it should only be used under a doctor's sup"
+    },
+    {
+      "test_id": "medinfo_006",
+      "utterance": "What is Benadryl used for?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Benadryl is used for seasonal and year-round allergy symptoms, hives, skin itching, and short-term insomnia (sleep aid)."
+    },
+    {
+      "test_id": "medinfo_007",
+      "utterance": "Tell me about Tylenol.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Tylenol is a widely used over-the-counter (OTC) pain reliever and fever reducer. It is available in 325 mg, 500 mg, and 650 mg tablets and capsules. C"
+    },
+    {
+      "test_id": "medinfo_008",
+      "utterance": "What are the warnings for melatonin?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Melatonin is not recommended for long-term daily use without physician guidance. There are also warnings about not driving or operating machinery afte"
+    },
+    {
+      "test_id": "medinfo_009",
+      "utterance": "Can I take ibuprofen and aspirin together?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "No, taking ibuprofen and aspirin together can reduce aspirin's cardioprotective effect and increase the risk of gastrointestinal bleeding. It is recom"
+    },
+    {
+      "test_id": "medinfo_010",
+      "utterance": "How much melatonin should I take? I'm 30 years old.",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "For melatonin, a typical starting dose is 0.5 mg, taken 30\u201360 minutes before bedtime. Higher doses may be considered at 3 mg, but most people do not n"
+    },
+    {
+      "test_id": "medinfo_011",
+      "utterance": "What is clotrimazole used for?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Clotrimazole is used for treating skin and nail fungal infections, such as athlete's foot, jock itch, ringworm, and yeast infections (vaginal formulat"
+    },
+    {
+      "test_id": "medinfo_012",
+      "utterance": "I want to learn about hydrocortisone cream.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Hydrocortisone 1% cream is available at HealthFirst Community Pharmacy. It's used for relieving skin inflammation, itching, and redness from condition"
+    }
+  ],
+  "argument_accuracy": 0.0
+}

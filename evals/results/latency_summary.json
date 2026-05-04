@@ -1,0 +1,46 @@
+[
+  {
+    "scenario": "mixed",
+    "n": 30,
+    "ttft_median": 0.0322,
+    "ttft_p90": 0.036,
+    "ttft_p99": 0.4185,
+    "inter_token_mean": 0.0112,
+    "e2e_median": 0.8657,
+    "e2e_p90": 1.1265,
+    "e2e_p99": 1.3604
+  },
+  {
+    "scenario": "rag_only",
+    "n": 30,
+    "ttft_median": 0.0328,
+    "ttft_p90": 0.0364,
+    "ttft_p99": 0.4987,
+    "inter_token_mean": 0.0113,
+    "e2e_median": 0.7837,
+    "e2e_p90": 1.0292,
+    "e2e_p99": 1.336
+  },
+  {
+    "scenario": "simple",
+    "n": 30,
+    "ttft_median": 0.0321,
+    "ttft_p90": 0.0362,
+    "ttft_p99": 0.5968,
+    "inter_token_mean": 0.0127,
+    "e2e_median": 0.5555,
+    "e2e_p90": 0.5907,
+    "e2e_p99": 0.9623
+  },
+  {
+    "scenario": "tool_only",
+    "n": 30,
+    "ttft_median": 0.032,
+    "ttft_p90": 0.0359,
+    "ttft_p99": 0.4931,
+    "inter_token_mean": 0.013,
+    "e2e_median": 0.5416,
+    "e2e_p90": 0.5688,
+    "e2e_p99": 0.855
+  }
+]

@@ -1,0 +1,107 @@
+{
+  "tp": 8,
+  "fp": 0,
+  "fn": 0,
+  "tn": 4,
+  "tpr": 1.0,
+  "fpr": 0.0,
+  "per_case": [
+    {
+      "test_id": "dosage_001",
+      "utterance": "What is the dose of ibuprofen for a 5-year-old weighing 20 kg?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "The dose of ibuprofen for a 5-year-old weighing 20 kg is 10 mg/kg every 6 hours. Maximum is 40 mg/kg/day or 800 mg/day."
+    },
+    {
+      "test_id": "dosage_002",
+      "utterance": "How much acetaminophen should I take? I'm 35 years old.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "For an adult, a standard dose of acetaminophen is 500 mg every 4 hours. The maximum daily dose is 4,000 mg. However, if you drink alcohol regularly, y"
+    },
+    {
+      "test_id": "dosage_003",
+      "utterance": "How much Tylenol should I give my 8-year-old who weighs 30 kg?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "For an 8-year-old weighing 30 kg, you should give 10 mg per kg every 4 hours. This amounts to a dose of 300 mg every 4 hours. Ensure you use the measu"
+    },
+    {
+      "test_id": "dosage_004",
+      "utterance": "I'm 45 years old. What's the correct dosage of omeprazole?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "For adults 18 and over, the recommended dose of omeprazole is 20 mg taken once daily before a meal."
+    },
+    {
+      "test_id": "dosage_005",
+      "utterance": "How many mg of ibuprofen can I take? I'm 28.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "The maximum recommended dose of ibuprofen for adults is 1,200 mg per day."
+    },
+    {
+      "test_id": "dosage_006",
+      "utterance": "What is the dose of loratadine for a 3-year-old?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "The dose of loratadine for a 3-year-old is 5 mg once daily."
+    },
+    {
+      "test_id": "dosage_007",
+      "utterance": "What is ibuprofen used for?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "Ibuprofen is used for pain relief (headache, dental, menstrual, muscle, backache), fever reduction, and anti-inflammatory conditions (sprains, arthrit"
+    },
+    {
+      "test_id": "dosage_008",
+      "utterance": "Is ibuprofen safe to take while pregnant?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "Ibuprofen is generally considered safe at recommended doses throughout pregnancy, but it should be used cautiously, especially during the third trimes"
+    },
+    {
+      "test_id": "dosage_009",
+      "utterance": "Do you have loratadine in stock?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "Yes, we have loratadine in stock. It's available in 10 mg tablets."
+    },
+    {
+      "test_id": "dosage_010",
+      "utterance": "What are the side effects of acetaminophen?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "Common side effects of acetaminophen include skin rash, nausea, and stomach pain. Generally well-tolerated at recommended doses."
+    },
+    {
+      "test_id": "dosage_011",
+      "utterance": "What is the aspirin dose for a 10-year-old?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "The dose of aspirin for a 10-year-old is 325 mg every 4 to 6 hours, not to exceed 4,000 mg in 24 hours."
+    },
+    {
+      "test_id": "dosage_012",
+      "utterance": "How often should I take cetirizine? I'm 30 years old.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "For an adult like yourself, you typically would take cetirizine 5\u201310 mg once daily, providing 24-hour relief for allergies and hives."
+    }
+  ],
+  "argument_accuracy": 0.4286
+}

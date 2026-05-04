@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-04 13:17:42",
+  "generated_at": "2026-05-04 15:02:23",
   "rag_precision_at_3": 0.4133,
   "rag_recall_at_3": 0.98,
   "rag_mrr": 0.96,
@@ -7,7 +7,7 @@
   "task_completion_rate": null,
   "policy_adherence_rate": null,
   "mean_coherence_score": null,
-  "max_sustainable_concurrency": null,
+  "max_sustainable_concurrency": 2,
   "thresholds": {
     "task_completion_rate": 0.8,
     "policy_adherence_rate": 0.85,

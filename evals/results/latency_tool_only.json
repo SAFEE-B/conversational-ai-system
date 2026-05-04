@@ -1,0 +1,213 @@
+{
+  "scenario": "tool_only",
+  "message": "What is ibuprofen used for?",
+  "n_trials": 30,
+  "n_successful": 30,
+  "n_errors": 0,
+  "ttft": {
+    "mean": 0.0472,
+    "median": 0.032,
+    "p90": 0.0359,
+    "p99": 0.4931,
+    "min": 0.0261,
+    "max": 0.4931
+  },
+  "inter_token": {
+    "mean": 0.013,
+    "median": 0.0132,
+    "p90": 0.0138,
+    "p99": 0.0141,
+    "min": 0.0093,
+    "max": 0.0141
+  },
+  "e2e": {
+    "mean": 0.5509,
+    "median": 0.5416,
+    "p90": 0.5688,
+    "p99": 0.855,
+    "min": 0.4938,
+    "max": 0.855
+  },
+  "raw_samples": [
+    {
+      "ttft": 0.4931,
+      "inter_token": 0.0093,
+      "e2e": 0.855,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0278,
+      "inter_token": 0.0132,
+      "e2e": 0.515,
+      "n_tokens": 38
+    },
+    {
+      "ttft": 0.0301,
+      "inter_token": 0.0132,
+      "e2e": 0.5434,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.03,
+      "inter_token": 0.0132,
+      "e2e": 0.546,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0297,
+      "inter_token": 0.0131,
+      "e2e": 0.5399,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0319,
+      "inter_token": 0.0133,
+      "e2e": 0.5493,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0329,
+      "inter_token": 0.0137,
+      "e2e": 0.5391,
+      "n_tokens": 38
+    },
+    {
+      "ttft": 0.0336,
+      "inter_token": 0.0115,
+      "e2e": 0.4938,
+      "n_tokens": 41
+    },
+    {
+      "ttft": 0.0317,
+      "inter_token": 0.0127,
+      "e2e": 0.5377,
+      "n_tokens": 41
+    },
+    {
+      "ttft": 0.0325,
+      "inter_token": 0.0127,
+      "e2e": 0.529,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0322,
+      "inter_token": 0.0138,
+      "e2e": 0.556,
+      "n_tokens": 39
+    },
+    {
+      "ttft": 0.034,
+      "inter_token": 0.0127,
+      "e2e": 0.5688,
+      "n_tokens": 43
+    },
+    {
+      "ttft": 0.0317,
+      "inter_token": 0.0128,
+      "e2e": 0.5439,
+      "n_tokens": 41
+    },
+    {
+      "ttft": 0.0323,
+      "inter_token": 0.0133,
+      "e2e": 0.5393,
+      "n_tokens": 39
+    },
+    {
+      "ttft": 0.0273,
+      "inter_token": 0.0132,
+      "e2e": 0.5307,
+      "n_tokens": 39
+    },
+    {
+      "ttft": 0.0291,
+      "inter_token": 0.0133,
+      "e2e": 0.5495,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0307,
+      "inter_token": 0.0137,
+      "e2e": 0.5228,
+      "n_tokens": 37
+    },
+    {
+      "ttft": 0.0334,
+      "inter_token": 0.0138,
+      "e2e": 0.5565,
+      "n_tokens": 39
+    },
+    {
+      "ttft": 0.0328,
+      "inter_token": 0.0136,
+      "e2e": 0.5616,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0323,
+      "inter_token": 0.0138,
+      "e2e": 0.5288,
+      "n_tokens": 37
+    },
+    {
+      "ttft": 0.035,
+      "inter_token": 0.0115,
+      "e2e": 0.4954,
+      "n_tokens": 41
+    },
+    {
+      "ttft": 0.0321,
+      "inter_token": 0.0126,
+      "e2e": 0.5094,
+      "n_tokens": 39
+    },
+    {
+      "ttft": 0.0412,
+      "inter_token": 0.0134,
+      "e2e": 0.5637,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0278,
+      "inter_token": 0.0133,
+      "e2e": 0.5318,
+      "n_tokens": 39
+    },
+    {
+      "ttft": 0.031,
+      "inter_token": 0.0124,
+      "e2e": 0.6123,
+      "n_tokens": 48
+    },
+    {
+      "ttft": 0.0319,
+      "inter_token": 0.0124,
+      "e2e": 0.5033,
+      "n_tokens": 39
+    },
+    {
+      "ttft": 0.0339,
+      "inter_token": 0.0132,
+      "e2e": 0.5475,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0359,
+      "inter_token": 0.0134,
+      "e2e": 0.5598,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0261,
+      "inter_token": 0.013,
+      "e2e": 0.5311,
+      "n_tokens": 40
+    },
+    {
+      "ttft": 0.0314,
+      "inter_token": 0.0141,
+      "e2e": 0.5674,
+      "n_tokens": 39
+    }
+  ]
+}

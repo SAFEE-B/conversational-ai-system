@@ -14,7 +14,7 @@
       "did_invoke": true,
       "correct": true,
       "arg_match": true,
-      "response_preview": "Ahmed Khan, how may I assist you today?"
+      "response_preview": "Hello Ahmed Khan, how may I assist you today with your pharmacy needs?"
     },
     {
       "test_id": "crm_002",
@@ -23,7 +23,7 @@
       "did_invoke": false,
       "correct": false,
       "arg_match": null,
-      "response_preview": "Hello, Sarah! How can I assist you today?"
+      "response_preview": "Hello Sarah, how may I assist you today regarding medications or our services at HealthFirst Community Pharmacy?"
     },
     {
       "test_id": "crm_003",
@@ -32,7 +32,7 @@
       "did_invoke": true,
       "correct": true,
       "arg_match": null,
-      "response_preview": "I can only help with pharmacy-related questions. Is there anything I can help you with regarding medications or our serv"
+      "response_preview": "I'm here to help with pharmacy-related questions. Is there anything I can help you with regarding medications or our ser"
     },
     {
       "test_id": "crm_004",
@@ -41,7 +41,7 @@
       "did_invoke": true,
       "correct": true,
       "arg_match": null,
-      "response_preview": "You are a pharmacy assistant at HealthFirst Community Pharmacy."
+      "response_preview": "I can only help with pharmacy-related questions. Is there anything I can help you with regarding medications or our serv"
     },
     {
       "test_id": "crm_005",
@@ -50,7 +50,7 @@
       "did_invoke": true,
       "correct": true,
       "arg_match": null,
-      "response_preview": "No customer record found for this session."
+      "response_preview": "Great to hear you were able to use your previous details here at HealthFirst Community Pharmacy. Is there something spec"
     },
     {
       "test_id": "crm_006",
@@ -59,7 +59,7 @@
       "did_invoke": true,
       "correct": true,
       "arg_match": null,
-      "response_preview": "Sure! Please remember to return to HealthFirst Community Pharmacy when you need services again."
+      "response_preview": "Of course! How can I assist you today with your medications or our services?"
     },
     {
       "test_id": "crm_007",
@@ -68,7 +68,7 @@
       "did_invoke": true,
       "correct": true,
       "arg_match": null,
-      "response_preview": "Please provide your phone number so I can confirm its availability."
+      "response_preview": "Sure, I have your phone number. Can you please tell me about the medication you need information on?"
     },
     {
       "test_id": "crm_008",
@@ -77,7 +77,7 @@
       "did_invoke": false,
       "correct": true,
       "arg_match": null,
-      "response_preview": "The pharmacy opening hours on Saturday are: **8:00 AM \u2013 9:00 PM**."
+      "response_preview": "HealthFirst Community Pharmacy is open on Saturday from 8:00 AM to 9:00 PM."
     },
     {
       "test_id": "crm_009",
@@ -86,7 +86,7 @@
       "did_invoke": false,
       "correct": true,
       "arg_match": null,
-      "response_preview": "Cetirizine is known to cause mild drowsiness (more than loratadine), dry mouth, fatigue."
+      "response_preview": "The common side effects of cetirizine include mild drowsiness (more than loratadine), dry mouth, and fatigue."
     },
     {
       "test_id": "crm_010",
@@ -95,7 +95,7 @@
       "did_invoke": false,
       "correct": true,
       "arg_match": null,
-      "response_preview": "Yes, we carry paracetamol in 325 mg, 500 mg, and 650 mg tablets."
+      "response_preview": "The cost of ibuprofen can vary depending on the brand and form. For example, Advil 200 mg tablets cost approximately $0."
     },
     {
       "test_id": "crm_011",
@@ -104,7 +104,7 @@
       "did_invoke": false,
       "correct": true,
       "arg_match": null,
-      "response_preview": "Sure! Aspirin is a pain reliever that helps reduce fever, inflammation, and pain. It is commonly used to treat high feve"
+      "response_preview": "Aspirin (acetylsalicylic acid) is used for pain relief, fever reduction, and inflammation. Brands include Bayer Aspirin "
     },
     {
       "test_id": "crm_012",
@@ -113,7 +113,7 @@
       "did_invoke": true,
       "correct": true,
       "arg_match": null,
-      "response_preview": "Yes, I remember your contact information."
+      "response_preview": "I only have the information you provided during your last visit. Could you please tell me your name and phone number so "
     }
   ]
 }

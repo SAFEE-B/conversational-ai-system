@@ -12,7 +12,7 @@
       "should_invoke": true,
       "did_invoke": true,
       "correct": true,
-      "response_preview": "Yes, it is safe to take warfarin and aspirin together. Aspirin (acetylsalicylic acid) is a NSAID with analgesic, antipyretic, and antiplatelet propert"
+      "response_preview": "No, it is not safe to take warfarin and aspirin together. Both increase the risk of bleeding. Aspirin can displace warfarin from protein-binding sites"
     },
     {
       "test_id": "interaction_002",
@@ -20,7 +20,7 @@
       "should_invoke": true,
       "did_invoke": true,
       "correct": true,
-      "response_preview": "No, you cannot mix ibuprofen and naproxen. The interaction between the two medications is major, doubling the risk of GI bleeding, ulcers, and renal t"
+      "response_preview": "No, taking both ibuprofen and naproxen at the same time can increase your risk of gastrointestinal bleeding, ulcers, and kidney problems. Choose one N"
     },
     {
       "test_id": "interaction_003",
@@ -28,7 +28,7 @@
       "should_invoke": true,
       "did_invoke": false,
       "correct": false,
-      "response_preview": "If you take acetaminophen and warfarin simultaneously, there is a risk of increasing bleeding from a blood-thinner such as warfarin. This is because w"
+      "response_preview": "Taking acetaminophen and warfarin together can increase the risk of bleeding. Always consult a healthcare provider before taking any new medications, "
     },
     {
       "test_id": "interaction_004",
@@ -36,7 +36,7 @@
       "should_invoke": true,
       "did_invoke": false,
       "correct": false,
-      "response_preview": "No, I can only help with pharmacy-related questions. Is there anything I can help you with regarding medications or our services?"
+      "response_preview": "No, you should avoid alcohol while on metronidazole and for 48 hours after completing the treatment."
     },
     {
       "test_id": "interaction_005",
@@ -44,7 +44,7 @@
       "should_invoke": true,
       "did_invoke": true,
       "correct": true,
-      "response_preview": "Yes, we carry paracetamol in 325 mg, 500 mg, and 650 mg tablets."
+      "response_preview": "Omeprazole can decrease the effectiveness of clopidogrel, which is used to prevent blood clots. Therefore, it is not recommended to take omeprazole an"
     },
     {
       "test_id": "interaction_006",
@@ -52,7 +52,7 @@
       "should_invoke": true,
       "did_invoke": false,
       "correct": false,
-      "response_preview": "Yes, you can take ibuprofen with warfarin to provide pain relief. Warfarin is a blood-threat medication that is commonly prescribed for conditions suc"
+      "response_preview": "Yes, you can take ibuprofen with warfarin, but it may affect how your blood thinning medication works. Always check with your doctor or pharmacist."
     },
     {
       "test_id": "interaction_007",
@@ -60,7 +60,7 @@
       "should_invoke": false,
       "did_invoke": false,
       "correct": true,
-      "response_preview": "The patient's guide states that for adults (18 years and older), the dose is 10\u201315 mg/kg every 4\u20136 hours as needed."
+      "response_preview": "The dosage for aspirin in adults is 325\u2013650 mg every 4\u20136 hours as needed. Maximum: 4,000 mg/day."
     },
     {
       "test_id": "interaction_008",
@@ -68,7 +68,7 @@
       "should_invoke": false,
       "did_invoke": false,
       "correct": true,
-      "response_preview": "Yes, we carry paracetamol in 325 mg, 500 mg, and 650 mg tablets."
+      "response_preview": "I can only help with pharmacy-related questions. Is there anything I can help you with regarding medications or our services?"
     },
     {
       "test_id": "interaction_009",
@@ -76,7 +76,7 @@
       "should_invoke": false,
       "did_invoke": false,
       "correct": true,
-      "response_preview": "Yes, you can take aspirin for a headache. It's an NSAID that can help with both pain and fever relief."
+      "response_preview": "Yes, aspirin is an OTC option for pain relief, including headaches. You can take 325\u2013650 mg every 4\u20136 hours."
     },
     {
       "test_id": "interaction_010",
@@ -84,7 +84,7 @@
       "should_invoke": false,
       "did_invoke": false,
       "correct": true,
-      "response_preview": "The side effects of taking ibuprofen include stomach upset, nausea, heartburn, and diarrhea."
+      "response_preview": "Common side effects of ibuprofen include stomach upset, nausea, and heartburn. Less common effects are dizziness and headache. Serious but rare effect"
     },
     {
       "test_id": "interaction_011",
@@ -92,7 +92,7 @@
       "should_invoke": true,
       "did_invoke": false,
       "correct": false,
-      "response_preview": "Yes, you can take both diphenhydramine and alcohol in the same prescription as long as the dosage and all other instructions are followed. However, it"
+      "response_preview": "Yes, diphenhydramine can cause significant sedation, and combining it with alcohol can amplify these effects. It's best to avoid driving or operating "
     },
     {
       "test_id": "interaction_012",
@@ -100,8 +100,8 @@
       "should_invoke": true,
       "did_invoke": true,
       "correct": true,
-      "response_preview": "Yes, melatonin is safe to combine with warfarin. Warfarin can potentially increase the anticoagulant effect of melatonin, which can be particularly da"
+      "response_preview": "Yes, melatonin is generally safe to combine with warfarin. However, monitor your INR and inform your anticoagulation clinic."
     }
   ],
-  "argument_accuracy": 0.25
+  "argument_accuracy": 0.0
 }

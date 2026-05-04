@@ -9,7 +9,8 @@ class LLMEngine:
         self.llm = Llama(
             model_path=model_path,
             n_threads=max(1, os.cpu_count() - 1),
-            n_ctx=4096,
+            n_gpu_layers=-1,
+            n_ctx=8192,
             verbose=False,
         )
         self.executor = ThreadPoolExecutor(max_workers=1)

@@ -1,0 +1,213 @@
+{
+  "scenario": "rag_only",
+  "message": "What is the best way to store my medications at home safely?",
+  "n_trials": 30,
+  "n_successful": 30,
+  "n_errors": 0,
+  "ttft": {
+    "mean": 0.0479,
+    "median": 0.0328,
+    "p90": 0.0364,
+    "p99": 0.4987,
+    "min": 0.0277,
+    "max": 0.4987
+  },
+  "inter_token": {
+    "mean": 0.0113,
+    "median": 0.0112,
+    "p90": 0.0125,
+    "p99": 0.0139,
+    "min": 0.0092,
+    "max": 0.0139
+  },
+  "e2e": {
+    "mean": 0.7938,
+    "median": 0.7837,
+    "p90": 1.0292,
+    "p99": 1.336,
+    "min": 0.4599,
+    "max": 1.336
+  },
+  "raw_samples": [
+    {
+      "ttft": 0.4987,
+      "inter_token": 0.0092,
+      "e2e": 0.9681,
+      "n_tokens": 52
+    },
+    {
+      "ttft": 0.0322,
+      "inter_token": 0.0116,
+      "e2e": 0.6719,
+      "n_tokens": 56
+    },
+    {
+      "ttft": 0.0329,
+      "inter_token": 0.0117,
+      "e2e": 0.7591,
+      "n_tokens": 63
+    },
+    {
+      "ttft": 0.03,
+      "inter_token": 0.011,
+      "e2e": 1.0292,
+      "n_tokens": 92
+    },
+    {
+      "ttft": 0.0353,
+      "inter_token": 0.0109,
+      "e2e": 1.209,
+      "n_tokens": 109
+    },
+    {
+      "ttft": 0.0327,
+      "inter_token": 0.011,
+      "e2e": 0.7909,
+      "n_tokens": 70
+    },
+    {
+      "ttft": 0.0343,
+      "inter_token": 0.0108,
+      "e2e": 0.707,
+      "n_tokens": 63
+    },
+    {
+      "ttft": 0.0325,
+      "inter_token": 0.0111,
+      "e2e": 0.7969,
+      "n_tokens": 70
+    },
+    {
+      "ttft": 0.0375,
+      "inter_token": 0.0109,
+      "e2e": 0.7143,
+      "n_tokens": 63
+    },
+    {
+      "ttft": 0.0322,
+      "inter_token": 0.0116,
+      "e2e": 0.7063,
+      "n_tokens": 59
+    },
+    {
+      "ttft": 0.0277,
+      "inter_token": 0.011,
+      "e2e": 0.9864,
+      "n_tokens": 88
+    },
+    {
+      "ttft": 0.0338,
+      "inter_token": 0.0121,
+      "e2e": 0.7337,
+      "n_tokens": 59
+    },
+    {
+      "ttft": 0.0287,
+      "inter_token": 0.0114,
+      "e2e": 0.8694,
+      "n_tokens": 75
+    },
+    {
+      "ttft": 0.0328,
+      "inter_token": 0.0104,
+      "e2e": 0.7833,
+      "n_tokens": 73
+    },
+    {
+      "ttft": 0.0317,
+      "inter_token": 0.0135,
+      "e2e": 0.5429,
+      "n_tokens": 39
+    },
+    {
+      "ttft": 0.0329,
+      "inter_token": 0.0119,
+      "e2e": 0.4599,
+      "n_tokens": 37
+    },
+    {
+      "ttft": 0.0364,
+      "inter_token": 0.0139,
+      "e2e": 0.5245,
+      "n_tokens": 36
+    },
+    {
+      "ttft": 0.0294,
+      "inter_token": 0.0112,
+      "e2e": 0.8832,
+      "n_tokens": 77
+    },
+    {
+      "ttft": 0.0338,
+      "inter_token": 0.0112,
+      "e2e": 0.6051,
+      "n_tokens": 52
+    },
+    {
+      "ttft": 0.0304,
+      "inter_token": 0.012,
+      "e2e": 0.7241,
+      "n_tokens": 59
+    },
+    {
+      "ttft": 0.0331,
+      "inter_token": 0.0119,
+      "e2e": 0.7841,
+      "n_tokens": 64
+    },
+    {
+      "ttft": 0.0318,
+      "inter_token": 0.0112,
+      "e2e": 0.8717,
+      "n_tokens": 76
+    },
+    {
+      "ttft": 0.0317,
+      "inter_token": 0.0112,
+      "e2e": 0.78,
+      "n_tokens": 68
+    },
+    {
+      "ttft": 0.035,
+      "inter_token": 0.0117,
+      "e2e": 0.5846,
+      "n_tokens": 48
+    },
+    {
+      "ttft": 0.0346,
+      "inter_token": 0.0105,
+      "e2e": 0.7931,
+      "n_tokens": 73
+    },
+    {
+      "ttft": 0.0325,
+      "inter_token": 0.0116,
+      "e2e": 0.8455,
+      "n_tokens": 71
+    },
+    {
+      "ttft": 0.034,
+      "inter_token": 0.0104,
+      "e2e": 1.336,
+      "n_tokens": 126
+    },
+    {
+      "ttft": 0.0282,
+      "inter_token": 0.0125,
+      "e2e": 0.6269,
+      "n_tokens": 49
+    },
+    {
+      "ttft": 0.0281,
+      "inter_token": 0.0106,
+      "e2e": 0.7886,
+      "n_tokens": 73
+    },
+    {
+      "ttft": 0.0334,
+      "inter_token": 0.0102,
+      "e2e": 0.9381,
+      "n_tokens": 90
+    }
+  ]
+}
