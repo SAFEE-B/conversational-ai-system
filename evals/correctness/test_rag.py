@@ -64,7 +64,7 @@ def retriever():
 @pytest.fixture(scope="module")
 def ground_truth():
     path = os.path.join(RAG_GT_DIR, "rag_ground_truth.json")
-    return json.load(open(path))
+    return json.load(open(path, encoding="utf-8"))
 
 
 # ── Metric helpers ─────────────────────────────────────────────────────────

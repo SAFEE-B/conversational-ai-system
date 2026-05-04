@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-03 13:19:35",
+  "generated_at": "2026-05-04 13:17:42",
   "rag_precision_at_3": 0.4133,
   "rag_recall_at_3": 0.98,
   "rag_mrr": 0.96,

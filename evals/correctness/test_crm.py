@@ -125,7 +125,7 @@ async def test_crm_tool_invocation_accuracy(live_server):
     Results saved to evals/results/crm_results.json.
     """
     test_cases = json.load(
-        open(os.path.join(TOOL_TESTS_DIR, "crm_tests.json"))
+        open(os.path.join(TOOL_TESTS_DIR, "crm_tests.json"), encoding="utf-8")
     )
 
     tp = fp = fn = tn = 0

@@ -1,6 +1,6 @@
 # HealthFirst Pharmacy Chatbot — Eval Report
 
-_Generated: 2026-05-03 13:19:35_
+_Generated: 2026-05-04 13:17:42_
 
 ---
 
@@ -20,7 +20,11 @@ _Queries evaluated: 25_
 
 ## CRM Tool
 
-_No results (run `pytest evals/correctness/test_crm.py`)_
+| Metric            | Value | Threshold | Status |
+|-------------------|-------|-----------|--------|
+| Invocation TPR    | 0.875 | >= 0.8 | PASS |
+| Invocation FPR    | 0.0 | <= 0.1 | PASS |
+| Argument Accuracy | 1.0 | >= 0.75 | PASS |
 
 ---
 
@@ -28,7 +32,7 @@ _No results (run `pytest evals/correctness/test_crm.py`)_
 
 | Tool             | TPR  | FPR  | Arg Acc | TPR    | FPR    |
 |------------------|------|------|---------|--------|--------|
-| Drug Interaction | --   | --   | --      | no data | no data |
+| Drug Interaction | 0.5 | 0.0 | 0.25   | FAIL | PASS |
 | Dosage Calculator | --   | --   | --      | no data | no data |
 | Medication Info  | --   | --   | --      | no data | no data |
 

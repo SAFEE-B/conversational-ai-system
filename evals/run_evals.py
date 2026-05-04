@@ -117,8 +117,8 @@ def main():
     sys.path.insert(0, _EVALS_DIR)
     from report.generate_report import generate  # noqa: E402
     md_path, json_path = generate()
-    print(f"  Report  → {md_path}")
-    print(f"  Summary → {json_path}")
+    print(f"  Report  -> {md_path}")
+    print(f"  Summary -> {json_path}")
 
     # ── 4. Final summary ───────────────────────────────────────────────────────
     print(f"\n{'=' * 60}")

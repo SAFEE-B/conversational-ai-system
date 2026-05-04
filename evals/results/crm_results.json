@@ -1,0 +1,119 @@
+{
+  "tp": 7,
+  "fp": 0,
+  "fn": 1,
+  "tn": 4,
+  "tpr": 0.875,
+  "fpr": 0.0,
+  "argument_accuracy": 1.0,
+  "per_case": [
+    {
+      "test_id": "crm_001",
+      "utterance": "Hi, my name is Ahmed Khan.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "arg_match": true,
+      "response_preview": "Ahmed Khan, how may I assist you today?"
+    },
+    {
+      "test_id": "crm_002",
+      "utterance": "I'm Sarah.",
+      "should_invoke": true,
+      "did_invoke": false,
+      "correct": false,
+      "arg_match": null,
+      "response_preview": "Hello, Sarah! How can I assist you today?"
+    },
+    {
+      "test_id": "crm_003",
+      "utterance": "Do you know me?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "I can only help with pharmacy-related questions. Is there anything I can help you with regarding medications or our serv"
+    },
+    {
+      "test_id": "crm_004",
+      "utterance": "Who am I?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "You are a pharmacy assistant at HealthFirst Community Pharmacy."
+    },
+    {
+      "test_id": "crm_005",
+      "utterance": "I was here last visit and you had my details on file.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "No customer record found for this session."
+    },
+    {
+      "test_id": "crm_006",
+      "utterance": "Please remember me, I'm a regular customer.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "Sure! Please remember to return to HealthFirst Community Pharmacy when you need services again."
+    },
+    {
+      "test_id": "crm_007",
+      "utterance": "My phone number is 0321-1234567.",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "Please provide your phone number so I can confirm its availability."
+    },
+    {
+      "test_id": "crm_008",
+      "utterance": "What are the pharmacy opening hours on Saturday?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "The pharmacy opening hours on Saturday are: **8:00 AM \u2013 9:00 PM**."
+    },
+    {
+      "test_id": "crm_009",
+      "utterance": "What are the side effects of cetirizine?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "Cetirizine is known to cause mild drowsiness (more than loratadine), dry mouth, fatigue."
+    },
+    {
+      "test_id": "crm_010",
+      "utterance": "How much does ibuprofen cost?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "Yes, we carry paracetamol in 325 mg, 500 mg, and 650 mg tablets."
+    },
+    {
+      "test_id": "crm_011",
+      "utterance": "Can you tell me about aspirin?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "Sure! Aspirin is a pain reliever that helps reduce fever, inflammation, and pain. It is commonly used to treat high feve"
+    },
+    {
+      "test_id": "crm_012",
+      "utterance": "Do you remember my contact information?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "arg_match": null,
+      "response_preview": "Yes, I remember your contact information."
+    }
+  ]
+}

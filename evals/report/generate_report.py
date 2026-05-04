@@ -34,7 +34,7 @@ def _load(filename: str) -> dict | None:
     path = os.path.join(RESULTS_DIR, filename)
     if not os.path.exists(path):
         return None
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -238,7 +238,7 @@ def generate() -> tuple[str, str]:
 
     md_content = "\n".join(lines)
     md_path = os.path.join(REPORT_DIR, "eval_report.md")
-    with open(md_path, "w") as f:
+    with open(md_path, "w", encoding="utf-8") as f:
         f.write(md_content)
 
     def _scalar(fname, key):
@@ -260,7 +260,7 @@ def generate() -> tuple[str, str]:
         "e2e_median_limit_s":          E2E_MEDIAN_LIMIT_S,
     }
     json_path = os.path.join(REPORT_DIR, "eval_report.json")
-    with open(json_path, "w") as f:
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_summary, f, indent=2)
 
     return md_path, json_path
@@ -268,5 +268,5 @@ def generate() -> tuple[str, str]:
 
 if __name__ == "__main__":
     md, js = generate()
-    print(f"Report  → {md}")
-    print(f"Summary → {js}")
+    print(f"Report  -> {md}")
+    print(f"Summary -> {js}")

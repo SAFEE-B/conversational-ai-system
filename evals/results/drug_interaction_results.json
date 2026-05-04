@@ -1,0 +1,107 @@
+{
+  "tp": 4,
+  "fp": 0,
+  "fn": 4,
+  "tn": 4,
+  "tpr": 0.5,
+  "fpr": 0.0,
+  "per_case": [
+    {
+      "test_id": "interaction_001",
+      "utterance": "Is it safe to take warfarin and aspirin together?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Yes, it is safe to take warfarin and aspirin together. Aspirin (acetylsalicylic acid) is a NSAID with analgesic, antipyretic, and antiplatelet propert"
+    },
+    {
+      "test_id": "interaction_002",
+      "utterance": "Can I mix ibuprofen and naproxen?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "No, you cannot mix ibuprofen and naproxen. The interaction between the two medications is major, doubling the risk of GI bleeding, ulcers, and renal t"
+    },
+    {
+      "test_id": "interaction_003",
+      "utterance": "What happens if I take acetaminophen and warfarin at the same time?",
+      "should_invoke": true,
+      "did_invoke": false,
+      "correct": false,
+      "response_preview": "If you take acetaminophen and warfarin simultaneously, there is a risk of increasing bleeding from a blood-thinner such as warfarin. This is because w"
+    },
+    {
+      "test_id": "interaction_004",
+      "utterance": "I'm on metronidazole. Can I drink alcohol?",
+      "should_invoke": true,
+      "did_invoke": false,
+      "correct": false,
+      "response_preview": "No, I can only help with pharmacy-related questions. Is there anything I can help you with regarding medications or our services?"
+    },
+    {
+      "test_id": "interaction_005",
+      "utterance": "Is omeprazole safe to take with clopidogrel?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Yes, we carry paracetamol in 325 mg, 500 mg, and 650 mg tablets."
+    },
+    {
+      "test_id": "interaction_006",
+      "utterance": "Can I take ibuprofen with warfarin? I need pain relief.",
+      "should_invoke": true,
+      "did_invoke": false,
+      "correct": false,
+      "response_preview": "Yes, you can take ibuprofen with warfarin to provide pain relief. Warfarin is a blood-threat medication that is commonly prescribed for conditions suc"
+    },
+    {
+      "test_id": "interaction_007",
+      "utterance": "What is the dosage for aspirin in adults?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "The patient's guide states that for adults (18 years and older), the dose is 10\u201315 mg/kg every 4\u20136 hours as needed."
+    },
+    {
+      "test_id": "interaction_008",
+      "utterance": "Tell me everything about warfarin.",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "Yes, we carry paracetamol in 325 mg, 500 mg, and 650 mg tablets."
+    },
+    {
+      "test_id": "interaction_009",
+      "utterance": "Can I take aspirin for a headache?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "Yes, you can take aspirin for a headache. It's an NSAID that can help with both pain and fever relief."
+    },
+    {
+      "test_id": "interaction_010",
+      "utterance": "What are the side effects of taking ibuprofen?",
+      "should_invoke": false,
+      "did_invoke": false,
+      "correct": true,
+      "response_preview": "The side effects of taking ibuprofen include stomach upset, nausea, heartburn, and diarrhea."
+    },
+    {
+      "test_id": "interaction_011",
+      "utterance": "I take both diphenhydramine and alcohol. Is that okay?",
+      "should_invoke": true,
+      "did_invoke": false,
+      "correct": false,
+      "response_preview": "Yes, you can take both diphenhydramine and alcohol in the same prescription as long as the dosage and all other instructions are followed. However, it"
+    },
+    {
+      "test_id": "interaction_012",
+      "utterance": "Is melatonin safe to combine with warfarin?",
+      "should_invoke": true,
+      "did_invoke": true,
+      "correct": true,
+      "response_preview": "Yes, melatonin is safe to combine with warfarin. Warfarin can potentially increase the anticoagulant effect of melatonin, which can be particularly da"
+    }
+  ],
+  "argument_accuracy": 0.25
+}

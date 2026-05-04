@@ -113,7 +113,7 @@ def _call_judge(dialogue: dict, actual_turns: list[dict]) -> dict | None:
 def all_dialogues():
     import glob
     files = sorted(glob.glob(os.path.join(CONVERSATIONS_DIR, "*.json")))
-    return [json.load(open(f)) for f in files]
+    return [json.load(open(f, encoding="utf-8")) for f in files]
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -138,7 +138,7 @@ async def test_dialogue(live_server, dialogue_id):
         pytest.skip("GOOGLE_API_KEY not set")
 
     path = os.path.join(CONVERSATIONS_DIR, f"{dialogue_id}.json")
-    dialogue = json.load(open(path))
+    dialogue = json.load(open(path, encoding="utf-8"))
 
     user_turns = [t["content"] for t in dialogue["turns"] if t["role"] == "user"]
 
@@ -196,7 +196,7 @@ async def test_aggregate_conversational_metrics(live_server, all_dialogues):
     per_dialogue = []
 
     for rf in sorted(result_files):
-        data = json.load(open(rf))
+        data = json.load(open(rf, encoding="utf-8"))
         s = data.get("scores", {})
         if not s or "error" in s:
             continue

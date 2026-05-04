@@ -68,8 +68,8 @@
       "query_id": "rag_004",
       "query": "What is the recommended OTC dose of ibuprofen for adults?",
       "relevant_chunk_ids": [
-        "ibuprofen_guide.txt::chunk0",
-        "pain_management.txt::chunk0"
+        "pain_management.txt::chunk0",
+        "ibuprofen_guide.txt::chunk0"
       ],
       "retrieved_chunk_ids": [
         "ibuprofen_guide.txt::chunk0",
@@ -375,8 +375,8 @@
       "query_id": "rag_020",
       "query": "What is the correct acetaminophen dose for a child under 12?",
       "relevant_chunk_ids": [
-        "pediatric_dosing.txt::chunk0",
-        "acetaminophen_guide.txt::chunk0"
+        "acetaminophen_guide.txt::chunk0",
+        "pediatric_dosing.txt::chunk0"
       ],
       "retrieved_chunk_ids": [
         "pediatric_dosing.txt::chunk0",
@@ -433,8 +433,8 @@
       "query_id": "rag_023",
       "query": "What medications should never be given to children?",
       "relevant_chunk_ids": [
-        "pediatric_dosing.txt::chunk0",
-        "otc_safety_tips.txt::chunk0"
+        "otc_safety_tips.txt::chunk0",
+        "pediatric_dosing.txt::chunk0"
       ],
       "retrieved_chunk_ids": [
         "pediatric_dosing.txt::chunk0",
